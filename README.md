@@ -7,13 +7,13 @@ Project Organization
 ------------
 
     ├── README.md          <- The top-level README for developers using this project.
+    │
     ├── data
-    │   ├── external       <- Data from third party sources.
-    │   │   ├── train      <- Data used to train the model.
-    │   │   └── test       <- Data used to test the model.
     │   ├── interim        <- Intermediate data that has been transformed.
     │   ├── processed      <- The final, canonical data sets for modeling.
     │   └── raw            <- The original, immutable data dump.
+    │       ├── train      <- Data used to train the model.
+    │       └── test       <- Data used to test the model.
     │
     ├── models             <- Trained and serialized models, model predictions, or model summaries
     │
@@ -22,6 +22,7 @@ Project Organization
     │                         `1.0-jqp-initial-data-exploration`.
     │
     ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
+    │
     ├── src                <- Source code for use in this project.
     │   ├── __init__.py    <- Makes src a Python module
     │   │
