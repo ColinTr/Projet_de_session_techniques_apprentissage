@@ -15,8 +15,6 @@ Project Organization
     │       ├── train      <- Data used to train the model.
     │       └── test       <- Data used to test the model.
     │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
     ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
     │                         the creator's initials, and a short `-` delimited description, e.g.
     │                         `1.0-jqp-initial-data-exploration`.
@@ -33,12 +31,12 @@ Project Organization
     │   │   └── build_features.py
     │   │
     │   ├── models         <- Scripts to train models and then use trained models to make predictions
-    │   │   ├── closed_form.py
+    │   │   ├── generatif_et_fischer.py
     │   │   ├── methodes_a_noyau.py
     │   │   ├── perceptron.py
     │   │   ├── regression_logistique.py
     │   │   ├── reseaux_de_neurones.py
-    │   │   └── support_vector_machines.py
+    │   │   └── machines_a_vecteurs_de_support.py
     │   │
     │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
     │       └── visualize.py
