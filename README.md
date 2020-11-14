@@ -32,10 +32,13 @@ Project Organization
     │   ├── features       <- Scripts to turn raw data into features for modeling
     │   │   └── build_features.py
     │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
+    │   ├── models         <- Scripts to train models and then use trained models to make predictions
+    │   │   ├── closed_form.py
+    │   │   ├── methodes_a_noyau.py
+    │   │   ├── perceptron.py
+    │   │   ├── regression_logistique.py
+    │   │   ├── reseaux_de_neurones.py
+    │   │   └── support_vector_machines.py
     │   │
     │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
     │       └── visualize.py
