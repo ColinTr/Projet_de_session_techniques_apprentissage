@@ -5,6 +5,7 @@ from src.data.data_handler import DataHandler
 from sklearn.model_selection import StratifiedShuffleSplit
 from src.models.perceptron import MyPerceptron
 from src.models.logistic_regression import MyLogisticRegression
+from src.models.support_vector_machines import MySVM
 
 
 def main():
@@ -22,13 +23,8 @@ def main():
         print("=============== Reading and handling data ===============")
         dh = DataHandler(data_input_filepath, output_filepath)
         dh.main()
-        data, data_normalized_centered, labels, species = \
+        data, data_normalized_centered, labels, species =\
             dh.read_all_output_files()
-
-        """print(data)
-        print(data_normalized_centered)
-        print(labels)
-        print(species)"""
 
         # Let's create a train and test dataset
         sss = StratifiedShuffleSplit(n_splits=10, test_size=0.2)
@@ -37,23 +33,34 @@ def main():
         x_train, x_test = data_normalized_centered[train_index], data_normalized_centered[test_index]
         t_train, t_test = labels[train_index].T[0], labels[test_index].T[0]
 
-        # Test perceptron one shot
-        """perceptron = MyPerceptron(x_train, t_train, x_test, t_test, 0.001, 1000, 'None', 0.01)
-        print(perceptron.grid_search())
-        acc = accuracy_score(perceptron.t_test, perceptron.train_predictions)
-        print("Train accuracy: {:.4%}".format(perceptron.classifier.score(x_train, t_train)))
-        print("Test accuracy: {:.4%}".format(acc))"""
+        perceptron = MyPerceptron(x_train, t_train, x_test, t_test)
+        best_lamb, best_eta0 = perceptron.grid_search()
+        print("Grid Search final hyper-parameters :", best_lamb, ", ", best_eta0)
+        perceptron = MyPerceptron(x_train, t_train, x_test, t_test, lamb=best_lamb, eta0=best_eta0)
+        perceptron.training()
+        print("Train accuracy : {:.4%}".format(perceptron.classifier.score(perceptron.x_train, perceptron.t_train)))
+        perceptron.prediction()
+        print("Test accuracy: {:.4%}".format(accuracy_score(perceptron.t_test, perceptron.train_predictions)))
 
-        logistic_regression = MyLogisticRegression(x_train, t_train, x_test, t_test, 'None')
+        logistic_regression = MyLogisticRegression(x_train, t_train, x_test, t_test)
         best_c = logistic_regression.grid_search()
-        print("Grid Search final hyper-parameters", best_c)
-        logistic_regression = MyLogisticRegression(x_train, t_train, x_test, t_test, 'None', C=best_c)
+        print("Grid Search final hyper-parameters :", best_c)
+        logistic_regression = MyLogisticRegression(x_train, t_train, x_test, t_test, c=best_c)
         logistic_regression.training()
-        logistic_regression.prediction()
         print("Train accuracy : {:.4%}".format(logistic_regression.classifier.score(logistic_regression.x_train,
                                                                                     logistic_regression.t_train)))
+        logistic_regression.prediction()
         print("Test accuracy : {:.4%}".format(accuracy_score(logistic_regression.t_test, logistic_regression.
                                                              train_predictions)))
+
+        svm = MySVM(x_train, t_train, x_test, t_test)
+        best_c, best_gamma = svm.grid_search()
+        print("Grid Search final hyper-parameters :", best_c, ", ", best_gamma)
+        svm = MySVM(x_train, t_train, x_test, t_test, c=best_c, gamma=best_gamma)
+        svm.training()
+        print("Train accuracy : {:.4%}".format(svm.classifier.score(svm.x_train, svm.t_train)))
+        svm.prediction()
+        print("Test accuracy: {:.4%}".format(accuracy_score(svm.t_test, svm.train_predictions)))
 
         print("Done")
     return
