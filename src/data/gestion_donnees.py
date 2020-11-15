@@ -21,10 +21,15 @@ def main():
     train_data_input_filepath = sys.argv[2]
     output_filepath = sys.argv[3]
 
+    train_data, test_data = parser_donnees_csv(train_data_input_filepath, test_data_input_filepath)
+
+    train_data, labels, test_data, test_ids, classes = encoder_especes(train_data, test_data)
+
+
+def parser_donnees_csv(train_data_input_filepath, test_data_input_filepath):
     train_data = pd.read_csv(train_data_input_filepath)
     test_data = pd.read_csv(test_data_input_filepath)
-
-    train, labels, test, test_ids, classes = encoder_especes(train_data, test_data)
+    return train_data, test_data
 
 
 def encoder_especes(training_data, testing_data):
@@ -37,10 +42,6 @@ def encoder_especes(training_data, testing_data):
     testing_data = testing_data.drop(['id'], axis=1)
 
     return training_data, labels, testing_data, test_ids, classes
-
-
-def parser_donnees_csv():
-    return
 
 
 def centrer_donnees():

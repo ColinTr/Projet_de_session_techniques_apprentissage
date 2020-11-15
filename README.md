@@ -27,16 +27,14 @@ Project Organization
     │   ├── data           <- Scripts to download or generate data
     │   │   └── gestion_donnees.py
     │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
     │   ├── models         <- Scripts to train models and then use trained models to make predictions
     │   │   ├── generatif_et_fischer.py
     │   │   ├── methodes_a_noyau.py
     │   │   ├── perceptron.py
     │   │   ├── regression_logistique.py
     │   │   ├── reseaux_de_neurones.py
-    │   │   └── machines_a_vecteurs_de_support.py
+    │   │   ├── machines_a_vecteurs_de_support.py
+    │   │   └── utilitaire_validation_croisee.py
     │   │
     │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
     │       └── visualize.py
