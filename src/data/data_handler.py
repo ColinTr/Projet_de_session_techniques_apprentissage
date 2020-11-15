@@ -5,15 +5,15 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
 
-def centrer_donnees(data):
+def center_data(data):
     return data.sub(data.mean(axis=0), axis=1)
 
 
-def normaliser_donnees(data):
+def normalize_data(data):
     return data.div(data.std(axis=0), axis=1)
 
 
-class GestionnaireDonnees:
+class DataHandler:
     def __init__(self, train_fp, test_fp, output_fp):
         self.train_data_input_filepath = train_fp
         self.test_data_input_filepath = test_fp
@@ -32,21 +32,21 @@ class GestionnaireDonnees:
             cleaned data ready to be analyzed (saved in ../processed).
         """
 
-        self.parser_donnees_csv(self.train_data_input_filepath, self.test_data_input_filepath)
+        self.parse_csv_file(self.train_data_input_filepath, self.test_data_input_filepath)
 
-        self.encoder_especes(self.train_data, self.test_data)
+        self.encode_species(self.train_data, self.test_data)
 
-        train_data_centered = centrer_donnees(self.train_data)
-        self.train_data_normalized_centered = normaliser_donnees(train_data_centered)
+        train_data_centered = center_data(self.train_data)
+        self.train_data_normalized_centered = normalize_data(train_data_centered)
 
-        self.exporter_donnees_en_csv()
+        self.export_data_into_csv()
 
-    def parser_donnees_csv(self, train_filepath, test_filepath):
+    def parse_csv_file(self, train_filepath, test_filepath):
         self.train_data = pd.read_csv(train_filepath)
         self.test_data = pd.read_csv(test_filepath)
         return
 
-    def encoder_especes(self, training_data, testing_data):
+    def encode_species(self, training_data, testing_data):
         le = LabelEncoder().fit(training_data.species)
         self.labels = le.transform(training_data.species)
         self.species = list(le.classes_)
@@ -56,20 +56,21 @@ class GestionnaireDonnees:
         self.test_data = testing_data.drop(['id'], axis=1)
         return
 
-    def exporter_donnees_en_csv(self):
-        # On cherche le nom des fichiers
+    def export_data_into_csv(self):
+        # We lookup the actual file names
         train_fn = os.path.basename(self.train_data_input_filepath)
         test_fn = os.path.basename(self.test_data_input_filepath)
 
-        # On crée le nom des fichiers que l'on va exporter
+        # We create the export files paths
         train_data_fp = self.output_filepath + '/train-data-processed-' + train_fn
-        centered_normalized_train_data_fp = self.output_filepath + '/train-data-centered-normalized-processed-' + train_fn
+        centered_normalized_train_data_fp =\
+            self.output_filepath + '/train-data-centered-normalized-processed-' + train_fn
         test_data_fp = self.output_filepath + '/test-data-processed-' + test_fn
         train_labels_fp = self.output_filepath + '/train-labels-processed-' + train_fn
         train_species_fp = self.output_filepath + '/train-species-processed-' + train_fn
         test_ids_fp = self.output_filepath + '/test-ids-processed-' + test_fn
 
-        # On exporte nos données
+        # We export our data
         self.train_data.to_csv(train_data_fp, index=False)
         self.train_data_normalized_centered.to_csv(centered_normalized_train_data_fp, index=False)
         self.test_data.to_csv(test_data_fp, index=False)
@@ -82,15 +83,15 @@ class GestionnaireDonnees:
 if __name__ == '__main__':
     if len(sys.argv) < 4:
         print(
-            "Usage: python gestion_donnees.py test_data_input_filepath train_data_input_filepath output_filepath\n")
+            "Usage: python data_handler.py test_data_input_filepath train_data_input_filepath output_filepath\n")
         print(
-            "Exemple (Windows) : python src\\data\\gestion_donnees.py data\\raw\\train\\leaf-classification-train.csv "
+            "Exemple (Windows) : python src\\data\\data_handler.py data\\raw\\train\\leaf-classification-train.csv "
             "data\\raw\\test\\leaf-classification-test.csv data\\processed\n")
-        print("Exemple (Linux) : python src/data/gestion_donnees.py data/raw/train/leaf-classification-train.csv "
+        print("Exemple (Linux) : python src/data/data_handler.py data/raw/train/leaf-classification-train.csv "
               "data/raw/test/leaf-classification-test.csv data/processed\n")
     else:
         train_data_input_filepath = sys.argv[1]
         test_data_input_filepath = sys.argv[2]
         output_filepath = sys.argv[3]
 
-        GestionnaireDonnees(train_data_input_filepath, test_data_input_filepath, output_filepath).main()
+        DataHandler(train_data_input_filepath, test_data_input_filepath, output_filepath).main()

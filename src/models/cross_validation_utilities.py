@@ -1,7 +1,7 @@
 from sklearn.model_selection import StratifiedShuffleSplit
 
 
-def echantillonnage(x_train, t_train):
+def sampling(x_train, t_train):
     sss = StratifiedShuffleSplit(labels, 10, test_size=0.2, random_state=23)
 
     for train_index, test_index in sss:
@@ -10,5 +10,5 @@ def echantillonnage(x_train, t_train):
     return
 
 
-def erreur():
+def error():
     return
