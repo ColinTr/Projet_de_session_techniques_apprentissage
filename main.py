@@ -25,6 +25,13 @@ def main():
         train_data, train_data_normalized_centered, test_data, train_labels, train_species, test_ids =\
             dh.read_all_output_files()
 
+        print(train_data)
+        print(train_data_normalized_centered)
+        print(test_data)
+        print(train_labels)
+        print(train_species)
+        print(test_ids)
+
         print("Done")
     return
 

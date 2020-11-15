@@ -58,12 +58,12 @@ class DataHandler:
         return
 
     def read_all_output_files(self):
-        trd = parse_csv_file(self.output_files_paths[0])
-        cntd = parse_csv_file(self.output_files_paths[1])
-        ted = parse_csv_file(self.output_files_paths[2])
-        tl = parse_csv_file(self.output_files_paths[3])
-        ts = parse_csv_file(self.output_files_paths[4])
-        ti = parse_csv_file(self.output_files_paths[4])
+        trd = parse_csv_file(self.output_files_paths[0]).to_numpy()
+        cntd = parse_csv_file(self.output_files_paths[1]).to_numpy()
+        ted = parse_csv_file(self.output_files_paths[2]).to_numpy()
+        tl = parse_csv_file(self.output_files_paths[3]).to_numpy()
+        ts = parse_csv_file(self.output_files_paths[4]).to_numpy()
+        ti = parse_csv_file(self.output_files_paths[5]).to_numpy()
         return trd, cntd, ted, tl, ts, ti
 
     def export_data_into_csv(self):
