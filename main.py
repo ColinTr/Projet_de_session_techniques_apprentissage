@@ -1,9 +1,11 @@
 import sys
 
+import numpy as np
+
 from src.data.data_handler import DataHandler
-from src.data.data_handler import parse_csv_file
 from sklearn.model_selection import StratifiedShuffleSplit
 from src.models.cross_validation_utilities import sampling
+from src.models.perceptron import MyPerceptron
 
 
 def main():
@@ -29,18 +31,20 @@ def main():
         print(labels)
         print(species)"""
 
-        #Create a set of data_train and data_test
-        sss = StratifiedShuffleSplit(10, test_size=0.2)
-        train_index, test_index = sss.split(data, labels)
-
-        print(train_index)
-        print(" \n ============= \n ")
-        print(test_index)
+        # Let's create a train and test dataset
+        sss = StratifiedShuffleSplit(n_splits=10, test_size=0.2)
+        # We take the first split of our sss
+        train_index, test_index = next(sss.split(data, labels))
         x_train, x_test = data[train_index], data[test_index]
-        t_train, t_test = labels[train_index], labels[test_index]
+        t_train, t_test = labels[train_index].T[0], labels[test_index].T[0]
 
-        #(x_train, t_train)
+        sampling(x_train, t_train)
 
+
+        # Test perceptron one shot
+        perceptron = MyPerceptron(x_train, t_train, x_test, t_test, 0.001, 1000)
+        perceptron.training()
+        perceptron.prediction()
 
         print("Done")
     return
