@@ -34,5 +34,5 @@ class MyPerceptron(BaseClassifier):
 
         self.training()
         self.prediction()
-        print("Grid search final accuracy : {:.4%}".format(self.cross_validation()))
+        print("Grid search final train accuracy : {:.4%}".format(self.classifier.score(self.x_train, self.t_train)))
         return best_lamb, best_eta0
