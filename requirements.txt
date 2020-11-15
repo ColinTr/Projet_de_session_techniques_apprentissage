@@ -2,9 +2,7 @@
 -e .
 
 # external requirements
-pykernel
 ipython
-ipython-genutils
 jupyter
 jupyter-client
 jupyter-console
