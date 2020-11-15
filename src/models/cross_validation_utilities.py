@@ -1,12 +1,12 @@
 from sklearn.model_selection import StratifiedShuffleSplit
 
 
-def sampling(x_train, t_train):
-    sss = StratifiedShuffleSplit(labels, 10, test_size=0.2, random_state=23)
+def sampling(x_train, t_train, k_fold=10, test_size=0.2):
 
-    for train_index, test_index in sss:
-        X_train, X_test = train.values[train_index], train.values[test_index]
-        y_train, y_test = labels[train_index], labels[test_index]
+    sss = StratifiedShuffleSplit(k_fold, test_size)
+    for train_index, test_index in sss.split(x_train, t_train):
+        X_train, X_test = x_train[train_index], x_train[test_index]
+        y_train, y_test = t_train[train_index], t_train[test_index]
     return
 
 
