@@ -21,7 +21,7 @@ class MyPerceptron(BaseClassifier):
         for lamb_i in np.linspace(0.000000001, 2, 10):
             self.lamb = lamb_i
 
-            for eta0_i in np.linspace(0.00001, 0.01, 10):
+            for eta0_i in np.linspace(0.00001, 1, 10):
                 self.eta0 = eta0_i
 
                 self.classifier = Perceptron(max_iter=self.max_iterations, alpha=self.lamb, penalty=self.penalty,
