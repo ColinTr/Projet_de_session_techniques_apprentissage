@@ -18,18 +18,14 @@ def parse_csv_file(filepath):
 
 
 class DataHandler:
-    def __init__(self, train_fp, test_fp, output_fp):
-        self.train_data_input_filepath = train_fp
-        self.test_data_input_filepath = test_fp
+    def __init__(self, train_fp, output_fp):
+        self.data_input_filepath = train_fp
         self.output_filepath = output_fp
         self.output_files_paths = []
 
-        self.train_data = None
-        self.test_data = None
-        self.train_data_normalized_centered = None
-
+        self.data = None
+        self.data_normalized_centered = None
         self.labels = None
-        self.test_ids = None
         self.species = None
 
     def main(self):
@@ -37,79 +33,66 @@ class DataHandler:
             cleaned data ready to be analyzed (saved in ../processed).
         """
 
-        self.train_data = parse_csv_file(self.train_data_input_filepath)
-        self.test_data = parse_csv_file(self.test_data_input_filepath)
+        self.data = parse_csv_file(self.data_input_filepath)
 
-        self.encode_species(self.train_data, self.test_data)
+        self.encode_species(self.data)
 
-        train_data_centered = center_data(self.train_data)
-        self.train_data_normalized_centered = normalize_data(train_data_centered)
+        data_centered = center_data(self.data)
+        self.data_normalized_centered = normalize_data(data_centered)
 
         self.export_data_into_csv()
 
-    def encode_species(self, training_data, testing_data):
-        le = LabelEncoder().fit(training_data.species)
-        self.labels = le.transform(training_data.species)
+    def encode_species(self, data_to_encode):
+        le = LabelEncoder().fit(data_to_encode.species)
+        self.labels = le.transform(data_to_encode.species)
         self.species = list(le.classes_)
 
-        self.test_ids = testing_data.id
-        self.train_data = training_data.drop(['species', 'id'], axis=1)
-        self.test_data = testing_data.drop(['id'], axis=1)
+        self.data = data_to_encode.drop(['species', 'id'], axis=1)
         return
 
     def read_all_output_files(self):
-        trd = parse_csv_file(self.output_files_paths[0]).to_numpy()
-        cntd = parse_csv_file(self.output_files_paths[1]).to_numpy()
-        ted = parse_csv_file(self.output_files_paths[2]).to_numpy()
-        tl = parse_csv_file(self.output_files_paths[3]).to_numpy()
-        ts = parse_csv_file(self.output_files_paths[4]).to_numpy()
-        ti = parse_csv_file(self.output_files_paths[5]).to_numpy()
-        return trd, cntd, ted, tl, ts, ti
+        data = parse_csv_file(self.output_files_paths[0]).to_numpy()
+        cn_data = parse_csv_file(self.output_files_paths[1]).to_numpy()
+        labels = parse_csv_file(self.output_files_paths[2]).to_numpy()
+        species = parse_csv_file(self.output_files_paths[3]).to_numpy()
+        return data, cn_data, labels, species
 
     def export_data_into_csv(self):
         # We lookup the actual file names
-        train_fn = os.path.basename(self.train_data_input_filepath)
-        test_fn = os.path.basename(self.test_data_input_filepath)
+        filename = os.path.basename(self.data_input_filepath)
 
         # We create the export files paths
-        train_data_fp = self.output_filepath + '/train-data-processed-' + train_fn
-        centered_normalized_train_data_fp =\
-            self.output_filepath + '/train-data-centered-normalized-processed-' + train_fn
-        test_data_fp = self.output_filepath + '/test-data-processed-' + test_fn
-        train_labels_fp = self.output_filepath + '/train-labels-processed-' + train_fn
-        train_species_fp = self.output_filepath + '/train-species-processed-' + train_fn
-        test_ids_fp = self.output_filepath + '/test-ids-processed-' + test_fn
+        data_fp = self.output_filepath + '/data-processed-' + filename
+        centered_normalized_data_fp =\
+            self.output_filepath + '/data-centered-normalized-processed-' + filename
+        labels_fp = self.output_filepath + '/labels-processed-' + filename
+        species_fp = self.output_filepath + '/species-processed-' + filename
 
         # We save the files paths for future read
-        self.output_files_paths.append(train_data_fp)
-        self.output_files_paths.append(centered_normalized_train_data_fp)
-        self.output_files_paths.append(test_data_fp)
-        self.output_files_paths.append(train_labels_fp)
-        self.output_files_paths.append(train_species_fp)
-        self.output_files_paths.append(test_ids_fp)
+        self.output_files_paths.append(data_fp)
+        self.output_files_paths.append(centered_normalized_data_fp)
+        self.output_files_paths.append(labels_fp)
+        self.output_files_paths.append(species_fp)
 
         # We export our data
-        self.train_data.to_csv(train_data_fp, index=False)
-        self.train_data_normalized_centered.to_csv(centered_normalized_train_data_fp, index=False)
-        self.test_data.to_csv(test_data_fp, index=False)
-        pd.DataFrame(data=self.labels, columns=["label_num"]).to_csv(train_labels_fp, index=False)
-        pd.DataFrame(data=self.species, columns=["species"]).to_csv(train_species_fp, index=False)
-        pd.DataFrame(data=self.test_ids, columns=["id"]).to_csv(test_ids_fp, index=False)
+        self.data.to_csv(data_fp, index=False)
+        self.data_normalized_centered.to_csv(centered_normalized_data_fp, index=False)
+        pd.DataFrame(data=self.labels, columns=["label_num"]).to_csv(labels_fp, index=False)
+        pd.DataFrame(data=self.species, columns=["species"]).to_csv(species_fp, index=False)
         return
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 3:
         print(
-            "Usage: python data_handler.py test_data_input_filepath train_data_input_filepath output_filepath\n")
+            "Usage: python data_handler.py train_data_input_filepath output_filepath\n")
         print(
             "Exemple (Windows) : python src\\data\\data_handler.py data\\raw\\train\\leaf-classification-train.csv "
-            "data\\raw\\test\\leaf-classification-test.csv data\\processed\n")
+            "data\\processed\n")
         print("Exemple (Linux) : python src/data/data_handler.py data/raw/train/leaf-classification-train.csv "
-              "data/raw/test/leaf-classification-test.csv data/processed\n")
+              "data/processed\n")
     else:
         train_data_input_filepath = sys.argv[1]
-        test_data_input_filepath = sys.argv[2]
-        output_filepath = sys.argv[3]
+        output_filepath = sys.argv[2]
 
-        DataHandler(train_data_input_filepath, test_data_input_filepath, output_filepath).main()
+        DataHandler(train_data_input_filepath, output_filepath).main()
