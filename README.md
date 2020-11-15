@@ -35,8 +35,10 @@ Project Organization
     │   │   ├── machines_a_vecteurs_de_support.py
     │   │   └── utilitaire_validation_croisee.py
     │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
+    │   ├── visualization  <- Scripts to create exploratory and results oriented visualizations
+    │   │   └── visualize.py
+    │   │
+    │   └── main.py        <- main script that launches everything needed to generate the results
     │
     └── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
                               generated with `pip freeze > requirements.txt`
