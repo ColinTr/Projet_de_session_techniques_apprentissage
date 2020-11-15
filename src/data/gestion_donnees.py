@@ -5,6 +5,14 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
 
+def centrer_donnees(data):
+    return data.sub(data.mean(axis=0), axis=1)
+
+
+def normaliser_donnees(data):
+    return data.div(data.std(axis=0), axis=1)
+
+
 class GestionnaireDonnees:
     def __init__(self, train_fp, test_fp, output_fp):
         self.train_data_input_filepath = train_fp
@@ -13,6 +21,7 @@ class GestionnaireDonnees:
 
         self.train_data = None
         self.test_data = None
+        self.train_data_normalized_centered = None
 
         self.labels = None
         self.test_ids = None
@@ -26,6 +35,9 @@ class GestionnaireDonnees:
         self.parser_donnees_csv(self.train_data_input_filepath, self.test_data_input_filepath)
 
         self.encoder_especes(self.train_data, self.test_data)
+
+        train_data_centered = centrer_donnees(self.train_data)
+        self.train_data_normalized_centered = normaliser_donnees(train_data_centered)
 
         self.exporter_donnees_en_csv()
 
@@ -44,12 +56,6 @@ class GestionnaireDonnees:
         self.test_data = testing_data.drop(['id'], axis=1)
         return
 
-    def centrer_donnees(self):
-        return
-
-    def normaliser_donnees(self):
-        return
-
     def exporter_donnees_en_csv(self):
         # On cherche le nom des fichiers
         train_fn = os.path.basename(self.train_data_input_filepath)
@@ -57,6 +63,7 @@ class GestionnaireDonnees:
 
         # On crée le nom des fichiers que l'on va exporter
         train_data_fp = self.output_filepath + '/train-data-processed-' + train_fn
+        centered_normalized_train_data_fp = self.output_filepath + '/train-data-centered-normalized-processed-' + train_fn
         test_data_fp = self.output_filepath + '/test-data-processed-' + test_fn
         train_labels_fp = self.output_filepath + '/train-labels-processed-' + train_fn
         train_species_fp = self.output_filepath + '/train-species-processed-' + train_fn
@@ -64,6 +71,7 @@ class GestionnaireDonnees:
 
         # On exporte nos données
         self.train_data.to_csv(train_data_fp, index=False)
+        self.train_data_normalized_centered.to_csv(centered_normalized_train_data_fp, index=False)
         self.test_data.to_csv(test_data_fp, index=False)
         pd.DataFrame(data=self.labels, columns=["label_num"]).to_csv(train_labels_fp, index=False)
         pd.DataFrame(data=self.species, columns=["species"]).to_csv(train_species_fp, index=False)
