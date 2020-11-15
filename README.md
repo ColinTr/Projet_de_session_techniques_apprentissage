@@ -24,16 +24,16 @@ Project Organization
     │   ├── __init__.py    <- Makes src a Python module
     │   │
     │   ├── data           <- Scripts to download or generate data
-    │   │   └── gestion_donnees.py
+    │   │   └── data_handler.py
     │   │
     │   ├── models         <- Scripts to train models and then use trained models to make predictions
-    │   │   ├── generatif_et_fischer.py
-    │   │   ├── methodes_a_noyau.py
+    │   │   ├── cross_validation_utilities.py
+    │   │   ├── generative_and_fischer.py
+    │   │   ├── kernel_methods.py
+    │   │   ├── logistic_regression.py
+    │   │   ├── neural_networks.py
     │   │   ├── perceptron.py
-    │   │   ├── regression_logistique.py
-    │   │   ├── reseaux_de_neurones.py
-    │   │   ├── machines_a_vecteurs_de_support.py
-    │   │   └── utilitaire_validation_croisee.py
+    │   │   └── support_vector_machines.py
     │   │
     │   ├── visualization  <- Scripts to create exploratory and results oriented visualizations
     │   │   └── visualize.py
