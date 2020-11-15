@@ -1,10 +1,8 @@
 import sys
 
-import numpy as np
-
+from sklearn.metrics import accuracy_score
 from src.data.data_handler import DataHandler
 from sklearn.model_selection import StratifiedShuffleSplit
-from src.models.cross_validation_utilities import sampling
 from src.models.perceptron import MyPerceptron
 
 
@@ -34,17 +32,16 @@ def main():
         # Let's create a train and test dataset
         sss = StratifiedShuffleSplit(n_splits=10, test_size=0.2)
         # We take the first split of our sss
-        train_index, test_index = next(sss.split(data, labels))
-        x_train, x_test = data[train_index], data[test_index]
+        train_index, test_index = next(sss.split(data_normalized_centered, labels))
+        x_train, x_test = data_normalized_centered[train_index], data_normalized_centered[test_index]
         t_train, t_test = labels[train_index].T[0], labels[test_index].T[0]
 
-        sampling(x_train, t_train)
-
-
         # Test perceptron one shot
-        perceptron = MyPerceptron(x_train, t_train, x_test, t_test, 0.001, 1000)
-        perceptron.training()
-        perceptron.prediction()
+        perceptron = MyPerceptron(x_train, t_train, x_test, t_test, 0.001, 1000, 'None', 0.01)
+        print(perceptron.grid_search())
+        acc = accuracy_score(perceptron.t_test, perceptron.train_predictions)
+        print("Train accuracy: {:.4%}".format(perceptron.classifier.score(x_train, t_train)))
+        print("Test accuracy: {:.4%}".format(acc))
 
         print("Done")
     return

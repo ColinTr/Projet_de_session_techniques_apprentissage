@@ -1,34 +1,38 @@
+import numpy as np
+
 from sklearn.linear_model import Perceptron
-from sklearn.metrics import accuracy_score
+from src.models.base_classifier import BaseClassifier
 
 
-class MyPerceptron:
-    def __init__(self, x_train, t_train, x_test, t_test, lamb, max_iterations):
-        self.classifier = Perceptron(eta0=0.001, max_iter=1000, penalty='l2')
-
-        self.x_train = x_train
-        self.t_train = t_train
-        self.x_test = x_test
-        self.t_test = t_test
-
-        self.w = None
-        self.w_0 = None
-        self.lamb = lamb
+class MyPerceptron(BaseClassifier):
+    def __init__(self, x_train, t_train, x_test, t_test, lamb, max_iterations, penalty, eta0):
+        super().__init__(x_train, t_train, x_test, t_test, lamb, 6)
+        self.eta0 = eta0
         self.max_iterations = max_iterations
+        self.penalty = penalty
+        self.classifier = Perceptron(max_iter=self.max_iterations, alpha=self.lamb, penalty=self.penalty,
+                                     eta0=self.eta0, n_jobs=-1)
 
-    def training(self):
-        self.classifier.fit(self.x_train, self.t_train)
-        self.w = self.classifier.coef_[0]
-        self.w_0 = self.classifier.intercept_[0]
+    def grid_search(self):
+        best_accuracy = 0
+        best_lamb = None
+        best_eta0 = None
 
-        print('w = ', self.w, 'w_0 = ', self.w_0, '\n')
-        return
+        for lamb_i in np.linspace(0.000000001, 2, 10):
+            self.lamb = lamb_i
 
-    def prediction(self):
-        train_predictions = self.classifier.predict(self.x_test)
-        acc = accuracy_score(self.t_test, train_predictions)
-        print("Accuracy: {:.4%}".format(acc))
-        return
+            for eta0_i in np.linspace(0.00001, 0.01, 10):
+                self.eta0 = eta0_i
 
-    def cross_validation(self):
-        return
+                self.classifier = Perceptron(max_iter=self.max_iterations, alpha=self.lamb, penalty=self.penalty,
+                                             eta0=self.eta0, n_jobs=-1)
+                mean_cross_validation_accuracy = self.cross_validation()
+                if mean_cross_validation_accuracy > best_accuracy:
+                    best_accuracy = mean_cross_validation_accuracy
+                    best_lamb = self.lamb
+                    best_eta0 = self.eta0
+
+        self.training()
+        self.prediction()
+        print("Grid search final accuracy : {:.4%}".format(self.cross_validation()))
+        return best_lamb, best_eta0
