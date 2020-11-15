@@ -7,9 +7,9 @@ from src.models.base_classifier import BaseClassifier
 class MySVM(BaseClassifier):
     def __init__(self, x_train, t_train, x_test, t_test, c=1.0, gamma='scale', kernel='rbf'):
         super().__init__(x_train, t_train, x_test, t_test, 6)
-        self.c = c
-        self.gamma = gamma
         self.kernel = kernel
+        self.gamma = gamma
+        self.c = c
         self.classifier = SVC(C=self.c, gamma=self.gamma, kernel=self.kernel)
 
     def grid_search(self):
@@ -27,6 +27,10 @@ class MySVM(BaseClassifier):
                 self.classifier = SVC(C=self.c, gamma=self.gamma, kernel=self.kernel)
                 
                 mean_cross_validation_accuracy = self.cross_validation()
+
+                if mean_cross_validation_accuracy == 100:
+                    print("All train data was correctly classified")
+
                 if mean_cross_validation_accuracy > best_accuracy:
                     best_accuracy = mean_cross_validation_accuracy
                     best_c = self.c

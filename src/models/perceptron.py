@@ -7,9 +7,9 @@ from src.models.base_classifier import BaseClassifier
 class MyPerceptron(BaseClassifier):
     def __init__(self, x_train, t_train, x_test, t_test, lamb=0.0001, max_iterations=1000, penalty='None', eta0=1):
         super().__init__(x_train, t_train, x_test, t_test, 6)
-        self.eta0 = eta0
         self.max_iterations = max_iterations
         self.penalty = penalty
+        self.eta0 = eta0
         self.lamb = lamb
         self.classifier = Perceptron(max_iter=self.max_iterations, alpha=self.lamb, penalty=self.penalty,
                                      eta0=self.eta0, n_jobs=-1)
@@ -29,6 +29,10 @@ class MyPerceptron(BaseClassifier):
                 self.classifier = Perceptron(max_iter=self.max_iterations, alpha=self.lamb, penalty=self.penalty,
                                              eta0=self.eta0, n_jobs=-1)
                 mean_cross_validation_accuracy = self.cross_validation()
+
+                if mean_cross_validation_accuracy == 100:
+                    print("All train data was correctly classified")
+
                 if mean_cross_validation_accuracy > best_accuracy:
                     best_accuracy = mean_cross_validation_accuracy
                     best_lamb = self.lamb
