@@ -27,12 +27,13 @@ Project Organization
     │   │   └── data_handler.py
     │   │
     │   ├── models         <- Scripts to train models and then use trained models to make predictions
-    │   │   ├── cross_validation_utilities.py
-    │   │   ├── ridge_regression.py
+    │   │   ├── adaboost_classifier.py
+    │   │   ├── base_classifier.py
     │   │   ├── discriminant_analysis.py
     │   │   ├── logistic_regression.py
     │   │   ├── neural_networks.py
     │   │   ├── perceptron.py
+    │   │   ├── ridge_regression.py
     │   │   └── support_vector_machines.py
     │   │
     │   ├── visualization  <- Scripts to create exploratory and results oriented visualizations

@@ -1,7 +1,6 @@
 import numpy as np
 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from src.models.base_classifier import BaseClassifier
 
 

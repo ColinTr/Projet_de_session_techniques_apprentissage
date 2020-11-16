@@ -4,6 +4,7 @@ from sklearn.metrics import accuracy_score
 from src.data.data_handler import DataHandler
 from sklearn.model_selection import StratifiedShuffleSplit
 
+from src.models.adaboost_classifier import MyAdaboostClassifier
 from src.models.discriminant_analysis import MyDiscriminantAnalysis
 from src.models.neural_networks import MyNeuralNetwork
 from src.models.perceptron import MyPerceptron
@@ -17,7 +18,7 @@ def main():
         print("Usage: python data_handler.py train_data_input_filepath output_filepath classifier "
               "centered_normalized_data\n")
         print("classifier : 0=>all, 1=>ridge, 2=>discriminant analysis, 3=>logistic,"
-              " 4=>neural networks, 5=>perceptron, 6=>SVM\n")
+              " 4=>neural networks, 5=>perceptron, 6=>SVM, 7=> AdaBoost\n")
         print("centered_normalized_data : 0=>raw data, 1=>centered and normalized data\n")
         print("Exemple (Windows): python main.py data\\raw\\train\\leaf-classification-train.csv data\\processed 0 1\n")
         print("Exemple (Linux): python main.py data/raw/train/leaf-classification-train.csv data/processed 0 1\n")
@@ -32,7 +33,7 @@ def main():
             print("Incorrect value in centered_normalized_data parameter")
             return
 
-        if classifier < 0 or classifier > 6:
+        if classifier < 0 or classifier > 7:
             print("Incorrect value in classifier parameter")
             return
 
@@ -72,7 +73,7 @@ def main():
             best_shrinkage = discriminant_analysis_classifier.grid_search()
             print("Grid Search final hyper-parameters :", best_shrinkage)
             discriminant_analysis_classifier = MyDiscriminantAnalysis(x_train, t_train, x_test, t_test,
-                                                                             shrinkage=best_shrinkage)
+                                                                      shrinkage=best_shrinkage)
             discriminant_analysis_classifier.training()
             print("Train accuracy : {:.4%}".format(
                 discriminant_analysis_classifier.classifier.score(
@@ -133,6 +134,19 @@ def main():
             svm_classifier.prediction()
             print("Test accuracy: {:.4%}".format(accuracy_score(svm_classifier.t_test,
                                                                 svm_classifier.train_predictions)))
+
+        if classifier == 0 or classifier == 7:
+            adaboost_classifier = MyAdaboostClassifier(x_train, t_train, x_test, t_test)
+            best_learning_rate, best_n_estimators = adaboost_classifier.grid_search()
+            print("Grid Search final hyper-parameters :", best_learning_rate, ", ", best_n_estimators)
+            adaboost_classifier = MyAdaboostClassifier(x_train, t_train, x_test, t_test,
+                                                       learning_rate=best_learning_rate, n_estimators=best_n_estimators)
+            adaboost_classifier.training()
+            print("Train accuracy : {:.4%}".format(adaboost_classifier.classifier.score(adaboost_classifier.x_train,
+                                                                                        adaboost_classifier.t_train)))
+            adaboost_classifier.prediction()
+            print("Test accuracy: {:.4%}".format(accuracy_score(adaboost_classifier.t_test,
+                                                                adaboost_classifier.train_predictions)))
 
     return
 

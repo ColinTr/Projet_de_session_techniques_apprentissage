@@ -25,7 +25,7 @@ class MySVM(BaseClassifier):
                 self.gamma = gamma_i
 
                 self.classifier = SVC(C=self.c, gamma=self.gamma, kernel=self.kernel)
-                
+
                 mean_cross_validation_accuracy = self.cross_validation()
 
                 if mean_cross_validation_accuracy == 100:

@@ -1,7 +1,6 @@
 import numpy as np
 
 from sklearn.neural_network import MLPClassifier
-
 from src.models.base_classifier import BaseClassifier
 
 
