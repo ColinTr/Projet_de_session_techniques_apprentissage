@@ -1,6 +1,8 @@
 import numpy as np
 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.model_selection import RandomizedSearchCV
+
 from src.models.base_classifier import BaseClassifier
 
 
@@ -13,6 +15,21 @@ class MyDiscriminantAnalysis(BaseClassifier):
         self.shrinkage = shrinkage
         self.reg_param = reg_param
         self.classifier = LinearDiscriminantAnalysis(solver=self.solver, shrinkage=self.shrinkage)
+
+    def sklearn_random_grid_search(self, n_iter):
+        print("======= Starting Linear discriminant grid search ========")
+        distributions = dict(shrinkage=np.linspace(0.0, 1, 100))
+
+        random_search = RandomizedSearchCV(self.classifier, distributions, n_jobs=-1, n_iter=n_iter)
+
+        search = random_search.fit(self.x_train, self.t_train)
+
+        best_shrinkage = search.best_params_['shrinkage']
+
+        print("Grid Search final hyper-parameters :\n"
+              "     best_shrinkage=", best_shrinkage)
+
+        return best_shrinkage
 
     def grid_search(self):
         if self.solver != 'lsqr' and self.solver != 'eigen':
@@ -36,5 +53,8 @@ class MyDiscriminantAnalysis(BaseClassifier):
             if mean_cross_validation_accuracy > best_accuracy:
                 best_accuracy = mean_cross_validation_accuracy
                 best_shrinkage = self.shrinkage
+
+        print("Grid Search final hyper-parameters :\n"
+              "     shrinkage=", best_shrinkage)
 
         return best_shrinkage

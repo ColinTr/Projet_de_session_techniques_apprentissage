@@ -18,14 +18,15 @@ class MyAdaboostClassifier(BaseClassifier):
         self.classifier = AdaBoostClassifier(n_estimators=self.n_estimators, learning_rate=self.learning_rate,
                                              base_estimator=self.base_estimator)
 
-    def sklearn_random_grid_search(self):
-        distributions = dict(learning_rate=np.linspace(0.0001, 5, 10),
-                             n_estimators=np.linspace(50, 250, 5, dtype=np.int16),
+    def sklearn_random_grid_search(self, n_iter):
+        print("============= Starting AdaBoost grid search =============")
+        distributions = dict(learning_rate=np.linspace(0.000001, 10, 20),
+                             n_estimators=np.linspace(50, 250, 20, dtype=np.int16),
                              base_estimator=[DecisionTreeClassifier(),
                                              RandomForestClassifier(),
                                              ExtraTreesClassifier()])
 
-        random_search = RandomizedSearchCV(self.classifier, distributions, n_jobs=-1)
+        random_search = RandomizedSearchCV(self.classifier, distributions, n_jobs=-1, n_iter=n_iter)
 
         search = random_search.fit(self.x_train, self.t_train)
 
@@ -34,7 +35,7 @@ class MyAdaboostClassifier(BaseClassifier):
         best_base_estimator = search.best_params_['base_estimator']
 
         print("Grid Search final hyper-parameters :\n"
-              "     learning_rate=", best_learning_rate, "\n" +
+              "     best_learning_rate=", best_learning_rate, "\n" +
               "     best_n_estimators=", best_n_estimators, "\n" +
               "     best_base_estimator=", best_base_estimator)
 
@@ -69,5 +70,10 @@ class MyAdaboostClassifier(BaseClassifier):
                         best_learning_rate = self.learning_rate
                         best_n_estimators = self.n_estimators
                         best_base_estimator = self.base_estimator
+
+        print("Grid Search final hyper-parameters :\n"
+              "     best_learning_rate=", best_learning_rate, "\n" +
+              "     best_n_estimators=", best_n_estimators, "\n" +
+              "     best_base_estimator=", best_base_estimator)
 
         return best_learning_rate, best_n_estimators, best_base_estimator

@@ -17,8 +17,8 @@ def main():
     if len(sys.argv) < 5:
         print("Usage: python data_handler.py train_data_input_filepath output_filepath classifier "
               "centered_normalized_data\n")
-        print("classifier : 0=>all, 1=>ridge, 2=>discriminant analysis, 3=>logistic,"
-              " 4=>neural networks, 5=>perceptron, 6=>SVM, 7=> AdaBoost\n")
+        print("classifier : 0=>all, 1=>>neural networks, 2=>discriminant analysis, 3=>logistic,"
+              " 4=ridge, 5=>perceptron, 6=>SVM, 7=> AdaBoost\n")
         print("centered_normalized_data : 0=>raw data, 1=>centered and normalized data\n")
         print("Exemple (Windows): python main.py data\\raw\\train\\leaf-classification-train.csv data\\processed 0 1\n")
         print("Exemple (Linux): python main.py data/raw/train/leaf-classification-train.csv data/processed 0 1\n")
@@ -43,6 +43,7 @@ def main():
         raw_data, data_normalized_centered, labels, species = \
             dh.read_all_output_files()
 
+        # ============================== GENERATING DATASETS ==============================
         # Let's create a train and test dataset
         sss = StratifiedShuffleSplit(n_splits=10, test_size=0.2)
         # We take the first split of our sss
@@ -56,24 +57,26 @@ def main():
             x_train, x_test = data_normalized_centered[train_index], data_normalized_centered[test_index]
             t_train, t_test = labels[train_index].T[0], labels[test_index].T[0]
 
+        # ================================= NN GRID SEARCH =================================
         if classifier == 0 or classifier == 1:
-            ridge_classifier = MyRidgeRegression(x_train, t_train, x_test, t_test)
-            best_lamb = ridge_classifier.grid_search()
-            print("Grid Search final hyper-parameters :\n"
-                  "     best_lamb=", best_lamb)
-            ridge_classifier = MyRidgeRegression(x_train, t_train, x_test, t_test, lamb=best_lamb)
-            ridge_classifier.training()
+            neural_network_classifier = MyNeuralNetwork(x_train, t_train, x_test, t_test)
+            # best_lamb, best_hidden_layer_sizes = neural_network_classifier.grid_search()
+            best_lamb, best_hidden_layer_sizes = neural_network_classifier.sklearn_random_grid_search(20)
+            neural_network_classifier = MyNeuralNetwork(x_train, t_train, x_test, t_test, lamb=best_lamb,
+                                                        hidden_layer_sizes=best_hidden_layer_sizes)
+            neural_network_classifier.training()
             print("Train accuracy : {:.4%}".format(
-                ridge_classifier.classifier.score(ridge_classifier.x_train, ridge_classifier.t_train)))
-            ridge_classifier.prediction()
-            print("Test accuracy : {:.4%}".format(
-                accuracy_score(ridge_classifier.t_test, ridge_classifier.train_predictions)))
+                neural_network_classifier.classifier.score(neural_network_classifier.x_train,
+                                                           neural_network_classifier.t_train)))
+            neural_network_classifier.prediction()
+            print("Test accuracy: {:.4%}".format(accuracy_score(neural_network_classifier.t_test,
+                                                                neural_network_classifier.train_predictions)))
 
+        # ======================== DISCRIMINANT ANALYSIS GRID SEARCH =======================
         if classifier == 0 or classifier == 2:
             discriminant_analysis_classifier = MyDiscriminantAnalysis(x_train, t_train, x_test, t_test)
-            best_shrinkage = discriminant_analysis_classifier.grid_search()
-            print("Grid Search final hyper-parameters :\n"
-                  "     best_lamb=", best_shrinkage)
+            # best_shrinkage = discriminant_analysis_classifier.grid_search()
+            best_shrinkage = discriminant_analysis_classifier.sklearn_random_grid_search(100)
             discriminant_analysis_classifier = MyDiscriminantAnalysis(x_train, t_train, x_test, t_test,
                                                                       shrinkage=best_shrinkage)
             discriminant_analysis_classifier.training()
@@ -85,11 +88,11 @@ def main():
                 accuracy_score(discriminant_analysis_classifier.t_test,
                                discriminant_analysis_classifier.train_predictions)))
 
+        # ========================= LOGISTIC REGRESSION GRID SEARCH ========================
         if classifier == 0 or classifier == 3:
             logistic_regression_classifier = MyLogisticRegression(x_train, t_train, x_test, t_test)
-            best_c = logistic_regression_classifier.grid_search()
-            print("Grid Search final hyper-parameters :\n"
-                  "     best_c=", best_c)
+            # best_c = logistic_regression_classifier.grid_search()
+            best_c = logistic_regression_classifier.sklearn_random_grid_search(30)
             logistic_regression_classifier = MyLogisticRegression(x_train, t_train, x_test, t_test, c=best_c)
             logistic_regression_classifier.training()
             print("Train accuracy : {:.4%}".format(
@@ -100,28 +103,25 @@ def main():
                 accuracy_score(logistic_regression_classifier.t_test, logistic_regression_classifier.
                                train_predictions)))
 
+        # =========================== RIDGE REGRESSION GRID SEARCH =========================
         if classifier == 0 or classifier == 4:
-            neural_network_classifier = MyNeuralNetwork(x_train, t_train, x_test, t_test)
-            best_lamb, best_hidden_layer_sizes = neural_network_classifier.grid_search()
-            print("Grid Search final hyper-parameters :\n"
-                  "     best_lamb=", best_lamb, "\n"
-                  "     best_hidden_layer_sizes=", best_hidden_layer_sizes)
-            neural_network_classifier = MyNeuralNetwork(x_train, t_train, x_test, t_test, lamb=best_lamb,
-                                                        hidden_layer_sizes=best_hidden_layer_sizes)
-            neural_network_classifier.training()
-            print("Train accuracy : {:.4%}".format(
-                neural_network_classifier.classifier.score(neural_network_classifier.x_train,
-                                                           neural_network_classifier.t_train)))
-            neural_network_classifier.prediction()
-            print("Test accuracy: {:.4%}".format(accuracy_score(neural_network_classifier.t_test,
-                                                                neural_network_classifier.train_predictions)))
+            ridge_classifier = MyRidgeRegression(x_train, t_train, x_test, t_test)
+            # best_lamb = ridge_classifier.grid_search()
+            best_lamb = ridge_classifier.sklearn_random_grid_search(100)
 
+            ridge_classifier = MyRidgeRegression(x_train, t_train, x_test, t_test, lamb=best_lamb)
+            ridge_classifier.training()
+            print("Train accuracy : {:.4%}".format(
+                ridge_classifier.classifier.score(ridge_classifier.x_train, ridge_classifier.t_train)))
+            ridge_classifier.prediction()
+            print("Test accuracy : {:.4%}".format(
+                accuracy_score(ridge_classifier.t_test, ridge_classifier.train_predictions)))
+
+        # ============================= PERCEPTRON GRID SEARCH =============================
         if classifier == 0 or classifier == 5:
             perceptron_classifier = MyPerceptron(x_train, t_train, x_test, t_test)
-            best_lamb, best_eta0 = perceptron_classifier.grid_search()
-            print("Grid Search final hyper-parameters :\n"
-                  "     best_lamb=", best_lamb, "\n"
-                  "     best_eta0=", best_eta0)
+            # best_lamb, best_eta0 = perceptron_classifier.grid_search()
+            best_lamb, best_eta0 = perceptron_classifier.sklearn_random_grid_search(50)
             perceptron_classifier = MyPerceptron(x_train, t_train, x_test, t_test, lamb=best_lamb, eta0=best_eta0)
             perceptron_classifier.training()
             print("Train accuracy : {:.4%}".format(
@@ -130,12 +130,11 @@ def main():
             print("Test accuracy: {:.4%}".format(accuracy_score(perceptron_classifier.t_test,
                                                                 perceptron_classifier.train_predictions)))
 
+        # ================================= SVM GRID SEARCH ================================
         if classifier == 0 or classifier == 6:
             svm_classifier = MySVM(x_train, t_train, x_test, t_test)
-            best_c, best_gamma = svm_classifier.grid_search()
-            print("Grid Search final hyper-parameters :\n"
-                  "     best_c=", best_c, "\n"
-                  "     best_gamma=", best_gamma)
+            # best_c, best_gamma = svm_classifier.grid_search()
+            best_c, best_gamma = svm_classifier.sklearn_random_grid_search(50)
             svm_classifier = MySVM(x_train, t_train, x_test, t_test, c=best_c, gamma=best_gamma)
             svm_classifier.training()
             print("Train accuracy : {:.4%}".format(svm_classifier.classifier.score(svm_classifier.x_train,
@@ -144,10 +143,11 @@ def main():
             print("Test accuracy: {:.4%}".format(accuracy_score(svm_classifier.t_test,
                                                                 svm_classifier.train_predictions)))
 
+        # ============================== ADABOOST GRID SEARCH ==============================
         if classifier == 0 or classifier == 7:
-            # best_learning_rate, best_n_estimators, best_base_estimator = adaboost_classifier.grid_search()
             adaboost_classifier = MyAdaboostClassifier(x_train, t_train, x_test, t_test, 'None')
-            best_learning_rate, best_n_estimators, best_base_estimator = adaboost_classifier.sklearn_random_grid_search()
+            # best_learning_rate, best_n_estimators, best_base_estimator = adaboost_classifier.grid_search()
+            best_learning_rate, best_n_estimators, best_base_estimator = adaboost_classifier.sklearn_random_grid_search(50)
 
             adaboost_classifier = MyAdaboostClassifier(x_train, t_train, x_test, t_test, best_base_estimator,
                                                        learning_rate=best_learning_rate, n_estimators=best_n_estimators)

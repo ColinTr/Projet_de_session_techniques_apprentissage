@@ -1,6 +1,8 @@
 import numpy as np
 
 from sklearn.linear_model import RidgeClassifier
+from sklearn.model_selection import RandomizedSearchCV
+
 from src.models.base_classifier import BaseClassifier
 
 
@@ -11,8 +13,23 @@ class MyRidgeRegression(BaseClassifier):
         self.lamb = lamb
         self.classifier = RidgeClassifier(max_iter=self.max_iterations, alpha=self.lamb)
 
+    def sklearn_random_grid_search(self, n_iter):
+        print("========= Starting Ridge regression grid search =========")
+        distributions = dict(alpha=np.linspace(0.000000001, 2, 100))
+
+        random_search = RandomizedSearchCV(self.classifier, distributions, n_jobs=-1, n_iter=n_iter)
+
+        search = random_search.fit(self.x_train, self.t_train)
+
+        best_lamb = search.best_params_['alpha']
+
+        print("Grid Search final hyper-parameters :\n"
+              "     best_learning_rate=", best_lamb)
+
+        return best_lamb
+
     def grid_search(self):
-        print("======= Starting Ridge regression grid search ========")
+        print("========= Starting Ridge regression grid search =========")
         best_accuracy = 0
         best_lamb = None
 
@@ -29,5 +46,8 @@ class MyRidgeRegression(BaseClassifier):
             if mean_cross_validation_accuracy > best_accuracy:
                 best_accuracy = mean_cross_validation_accuracy
                 best_lamb = self.lamb
+
+        print("Grid Search final hyper-parameters :\n"
+              "     best_learning_rate=", best_lamb)
 
         return best_lamb
