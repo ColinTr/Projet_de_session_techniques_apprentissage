@@ -59,7 +59,8 @@ def main():
         if classifier == 0 or classifier == 1:
             ridge_classifier = MyRidgeRegression(x_train, t_train, x_test, t_test)
             best_lamb = ridge_classifier.grid_search()
-            print("Grid Search final hyper-parameters :", best_lamb)
+            print("Grid Search final hyper-parameters :\n"
+                  "     best_lamb=", best_lamb)
             ridge_classifier = MyRidgeRegression(x_train, t_train, x_test, t_test, lamb=best_lamb)
             ridge_classifier.training()
             print("Train accuracy : {:.4%}".format(
@@ -71,7 +72,8 @@ def main():
         if classifier == 0 or classifier == 2:
             discriminant_analysis_classifier = MyDiscriminantAnalysis(x_train, t_train, x_test, t_test)
             best_shrinkage = discriminant_analysis_classifier.grid_search()
-            print("Grid Search final hyper-parameters :", best_shrinkage)
+            print("Grid Search final hyper-parameters :\n"
+                  "     best_lamb=", best_shrinkage)
             discriminant_analysis_classifier = MyDiscriminantAnalysis(x_train, t_train, x_test, t_test,
                                                                       shrinkage=best_shrinkage)
             discriminant_analysis_classifier.training()
@@ -86,7 +88,8 @@ def main():
         if classifier == 0 or classifier == 3:
             logistic_regression_classifier = MyLogisticRegression(x_train, t_train, x_test, t_test)
             best_c = logistic_regression_classifier.grid_search()
-            print("Grid Search final hyper-parameters :", best_c)
+            print("Grid Search final hyper-parameters :\n"
+                  "     best_c=", best_c)
             logistic_regression_classifier = MyLogisticRegression(x_train, t_train, x_test, t_test, c=best_c)
             logistic_regression_classifier.training()
             print("Train accuracy : {:.4%}".format(
@@ -100,7 +103,9 @@ def main():
         if classifier == 0 or classifier == 4:
             neural_network_classifier = MyNeuralNetwork(x_train, t_train, x_test, t_test)
             best_lamb, best_hidden_layer_sizes = neural_network_classifier.grid_search()
-            print("Grid Search final hyper-parameters :", best_lamb, ", ", best_hidden_layer_sizes)
+            print("Grid Search final hyper-parameters :\n"
+                  "     best_lamb=", best_lamb, "\n"
+                  "     best_hidden_layer_sizes=", best_hidden_layer_sizes)
             neural_network_classifier = MyNeuralNetwork(x_train, t_train, x_test, t_test, lamb=best_lamb,
                                                         hidden_layer_sizes=best_hidden_layer_sizes)
             neural_network_classifier.training()
@@ -114,7 +119,9 @@ def main():
         if classifier == 0 or classifier == 5:
             perceptron_classifier = MyPerceptron(x_train, t_train, x_test, t_test)
             best_lamb, best_eta0 = perceptron_classifier.grid_search()
-            print("Grid Search final hyper-parameters :", best_lamb, ", ", best_eta0)
+            print("Grid Search final hyper-parameters :\n"
+                  "     best_lamb=", best_lamb, "\n"
+                  "     best_eta0=", best_eta0)
             perceptron_classifier = MyPerceptron(x_train, t_train, x_test, t_test, lamb=best_lamb, eta0=best_eta0)
             perceptron_classifier.training()
             print("Train accuracy : {:.4%}".format(
@@ -126,7 +133,9 @@ def main():
         if classifier == 0 or classifier == 6:
             svm_classifier = MySVM(x_train, t_train, x_test, t_test)
             best_c, best_gamma = svm_classifier.grid_search()
-            print("Grid Search final hyper-parameters :", best_c, ", ", best_gamma)
+            print("Grid Search final hyper-parameters :\n"
+                  "     best_c=", best_c, "\n"
+                  "     best_gamma=", best_gamma)
             svm_classifier = MySVM(x_train, t_train, x_test, t_test, c=best_c, gamma=best_gamma)
             svm_classifier.training()
             print("Train accuracy : {:.4%}".format(svm_classifier.classifier.score(svm_classifier.x_train,
@@ -137,8 +146,11 @@ def main():
 
         if classifier == 0 or classifier == 7:
             adaboost_classifier = MyAdaboostClassifier(x_train, t_train, x_test, t_test)
-            best_learning_rate, best_n_estimators = adaboost_classifier.grid_search()
-            print("Grid Search final hyper-parameters :", best_learning_rate, ", ", best_n_estimators)
+            best_learning_rate, best_n_estimators, best_base_estimator = adaboost_classifier.grid_search()
+            print("Grid Search final hyper-parameters :\n"
+                  "     learning_rate=", best_learning_rate, "\n"
+                  "     best_n_estimators=", best_n_estimators, "\n"
+                  "     best_base_estimator=", best_base_estimator)
             adaboost_classifier = MyAdaboostClassifier(x_train, t_train, x_test, t_test,
                                                        learning_rate=best_learning_rate, n_estimators=best_n_estimators)
             adaboost_classifier.training()

@@ -24,7 +24,7 @@ class MyRidgeRegression(BaseClassifier):
             mean_cross_validation_accuracy = self.cross_validation()
 
             if mean_cross_validation_accuracy == 100:
-                print("All train data was correctly classified")
+                print("All train data was correctly classified during cross-validation !")
 
             if mean_cross_validation_accuracy > best_accuracy:
                 best_accuracy = mean_cross_validation_accuracy
