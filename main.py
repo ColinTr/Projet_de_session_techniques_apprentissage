@@ -145,13 +145,11 @@ def main():
                                                                 svm_classifier.train_predictions)))
 
         if classifier == 0 or classifier == 7:
-            adaboost_classifier = MyAdaboostClassifier(x_train, t_train, x_test, t_test)
-            best_learning_rate, best_n_estimators, best_base_estimator = adaboost_classifier.grid_search()
-            print("Grid Search final hyper-parameters :\n"
-                  "     learning_rate=", best_learning_rate, "\n"
-                  "     best_n_estimators=", best_n_estimators, "\n"
-                  "     best_base_estimator=", best_base_estimator)
-            adaboost_classifier = MyAdaboostClassifier(x_train, t_train, x_test, t_test,
+            # best_learning_rate, best_n_estimators, best_base_estimator = adaboost_classifier.grid_search()
+            adaboost_classifier = MyAdaboostClassifier(x_train, t_train, x_test, t_test, 'None')
+            best_learning_rate, best_n_estimators, best_base_estimator = adaboost_classifier.sklearn_random_grid_search()
+
+            adaboost_classifier = MyAdaboostClassifier(x_train, t_train, x_test, t_test, best_base_estimator,
                                                        learning_rate=best_learning_rate, n_estimators=best_n_estimators)
             adaboost_classifier.training()
             print("Train accuracy : {:.4%}".format(adaboost_classifier.classifier.score(adaboost_classifier.x_train,

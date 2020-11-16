@@ -2,20 +2,43 @@ import numpy as np
 
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.model_selection import RandomizedSearchCV
 from sklearn.tree import DecisionTreeClassifier
 
 from src.models.base_classifier import BaseClassifier
 
 
 class MyAdaboostClassifier(BaseClassifier):
-    def __init__(self, x_train, t_train, x_test, t_test, n_estimators=50, learning_rate=1, base_estimator='None'):
+    def __init__(self, x_train, t_train, x_test, t_test, base_estimator, n_estimators=50, learning_rate=1):
         super().__init__(x_train, t_train, x_test, t_test, 4)
         self.learning_rate = learning_rate
         self.n_estimators = n_estimators
         self.base_estimator = base_estimator
         self.classifier = AdaBoostClassifier(n_estimators=self.n_estimators, learning_rate=self.learning_rate,
                                              base_estimator=self.base_estimator)
+
+    def sklearn_random_grid_search(self):
+        distributions = dict(learning_rate=np.linspace(0.0001, 5, 10),
+                             n_estimators=np.linspace(50, 250, 5, dtype=np.int16),
+                             base_estimator=[DecisionTreeClassifier(),
+                                             RandomForestClassifier(),
+                                             ExtraTreesClassifier()])
+
+        random_search = RandomizedSearchCV(self.classifier, distributions, n_jobs=-1)
+
+        search = random_search.fit(self.x_train, self.t_train)
+
+        best_learning_rate = search.best_params_['learning_rate']
+        best_n_estimators = search.best_params_['n_estimators']
+        best_base_estimator = search.best_params_['base_estimator']
+
+        print("Grid Search final hyper-parameters :\n"
+              "     learning_rate=", best_learning_rate, "\n" +
+              "     best_n_estimators=", best_n_estimators, "\n" +
+              "     best_base_estimator=", best_base_estimator)
+
+        return best_learning_rate, best_n_estimators, best_base_estimator
 
     def grid_search(self):
         print("============= Starting AdaBoost grid search =============")
@@ -24,13 +47,13 @@ class MyAdaboostClassifier(BaseClassifier):
         best_n_estimators = None
         best_base_estimator = None
 
-        for base_estimator in [DecisionTreeClassifier(), RandomForestClassifier(), GradientBoostingClassifier()]:
+        for base_estimator in [DecisionTreeClassifier(), RandomForestClassifier(), ExtraTreesClassifier()]:
             self.base_estimator = base_estimator
 
-            for learning_rate_i in np.linspace(0.5, 5, 5):
+            for learning_rate_i in np.linspace(0.0001, 5, 10):
                 self.learning_rate = learning_rate_i
 
-                for n_estimators_i in np.linspace(50, 500, 10, dtype=np.int16):
+                for n_estimators_i in np.linspace(50, 250, 5, dtype=np.int16):
                     self.n_estimators = n_estimators_i
 
                     self.classifier = AdaBoostClassifier(n_estimators=self.n_estimators,
