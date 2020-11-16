@@ -8,12 +8,13 @@ from src.models.neural_networks import MyNeuralNetwork
 from src.models.perceptron import MyPerceptron
 from src.models.logistic_regression import MyLogisticRegression
 from src.models.support_vector_machines import MySVM
+from src.models.ridge_regression import MyRidgeRegression
 
 
 def main():
     if len(sys.argv) < 4:
         print("Usage: python data_handler.py train_data_input_filepath output_filepath classifier\n")
-        print("classifier : 0=>all, 1=>generative, 2=>kernel, 3=>logistic, 4=>neural networks, 5=>perceptron, 6=>SVM\n")
+        print("classifier : 0=>all, 1=>ridge, 2=>kernel, 3=>logistic, 4=>neural networks, 5=>perceptron, 6=>SVM\n")
         print("Exemple (Windows) : python main.py data\\raw\\train\\leaf-classification-train.csv data\\processed 0\n")
         print("Exemple (Linux) : python main.py data/raw/train/leaf-classification-train.csv data/processed 0\n")
 
@@ -36,8 +37,16 @@ def main():
         t_train, t_test = labels[train_index].T[0], labels[test_index].T[0]
 
         if classifier == 0 or classifier == 1:
-            generative_classifier = None
-            # TODO
+            ridge_classifier = MyRidgeRegression(x_train, t_train, x_test, t_test)
+            best_lamb = ridge_classifier.grid_search()
+            print("Grid Search final hyper-parameters :", best_lamb)
+            ridge_classifier = MyRidgeRegression(x_train, t_train, x_test, t_test, lamb=best_lamb)
+            ridge_classifier.training()
+            print("Train accuracy : {:.4%}".format(
+                ridge_classifier.classifier.score(ridge_classifier.x_train, ridge_classifier.t_train)))
+            ridge_classifier.prediction()
+            print("Test accuracy : {:.4%}".format(
+                accuracy_score(ridge_classifier.t_test, ridge_classifier.train_predictions)))
 
         if classifier == 0 or classifier == 2:
             kernel_classifier = None

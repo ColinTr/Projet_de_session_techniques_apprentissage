@@ -28,7 +28,7 @@ Project Organization
     │   │
     │   ├── models         <- Scripts to train models and then use trained models to make predictions
     │   │   ├── cross_validation_utilities.py
-    │   │   ├── generative_and_fischer.py
+    │   │   ├── ridge_regression.py
     │   │   ├── kernel_methods.py
     │   │   ├── logistic_regression.py
     │   │   ├── neural_networks.py
