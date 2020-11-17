@@ -4,6 +4,8 @@ from matplotlib import pyplot
 from sklearn.metrics import accuracy_score
 from src.data.data_handler import DataHandler
 from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.decomposition import PCA
+
 from src.models.adaboost_classifier import MyAdaboostClassifier
 from src.models.linear_discriminant_analysis import MyLinearDiscriminantAnalysis
 from src.models.neural_networks import MyNeuralNetwork
@@ -12,9 +14,17 @@ from src.models.logistic_regression import MyLogisticRegression
 from src.models.quadratic_discriminant_analysis import MyQuadraticDiscriminantAnalysis
 from src.models.support_vector_machines import MySVM
 from src.models.ridge_regression import MyRidgeRegression
+from src.models.naive_bayes import MyNaiveBayes
 
-from scipy.stats import shapiro
 from scipy.stats import normaltest
+
+
+def apply_pca_on_data(data):
+    pca = PCA(n_components='mle', svd_solver='full')
+    print("Number of descriptors before PCA: " + '{:1.0f}'.format(data.shape[1]))
+    data = pca.fit_transform(data)
+    print("Number of descriptors after PCA: " + '{:1.0f}'.format(data.shape[1]))
+    return data
 
 
 def main():
@@ -37,7 +47,7 @@ def main():
             print("Incorrect value in centered_normalized_data parameter")
             return
 
-        if classifier < 0 or classifier > 8:
+        if classifier < 0 or classifier > 9:
             print("Incorrect value in classifier parameter")
             return
 
@@ -46,6 +56,8 @@ def main():
         dh.main()
         raw_data, data_normalized_centered, labels, species = \
             dh.read_all_output_files()
+
+        raw_data = apply_pca_on_data(raw_data)
 
         # We check that our data preprocessing was correctly done
         print("Centered and normalized data mean :{:.4}".format(data_normalized_centered.mean()))
@@ -59,7 +71,7 @@ def main():
                 column.append(data_normalized_centered[j, i])
             stat, p = normaltest(column)
             p_total += p
-        print("Normaltest mean p={:.4}".format(p_total/len(data_normalized_centered)))
+        print("Normaltest mean p={:.4}".format(p_total / len(data_normalized_centered)))
 
         # ============================== GENERATING DATASETS ==============================
         # Let's create a train and test dataset
@@ -165,7 +177,8 @@ def main():
         if classifier == 0 or classifier == 7:
             adaboost_classifier = MyAdaboostClassifier(x_train, t_train, x_test, t_test, 'None')
             # best_learning_rate, best_n_estimators, best_base_estimator = adaboost_classifier.grid_search()
-            best_learning_rate, best_n_estimators, best_base_estimator = adaboost_classifier.sklearn_random_grid_search(50)
+            best_learning_rate, best_n_estimators, best_base_estimator = adaboost_classifier.sklearn_random_grid_search(
+                50)
 
             adaboost_classifier = MyAdaboostClassifier(x_train, t_train, x_test, t_test, best_base_estimator,
                                                        learning_rate=best_learning_rate, n_estimators=best_n_estimators)
@@ -179,11 +192,11 @@ def main():
         # =================== QUADRATIC DISCRIMINANT ANALYSIS GRID SEARCH ==================
         if classifier == 0 or classifier == 8:
             quadratic_discriminant_analysis_classifier = MyQuadraticDiscriminantAnalysis(x_train, t_train,
-                                                                                         x_test,t_test)
+                                                                                         x_test, t_test)
             # best_shrinkage = discriminant_analysis_classifier.grid_search()
-            best_reg_param, best_store_covariance = quadratic_discriminant_analysis_classifier.\
+            best_reg_param, best_store_covariance = quadratic_discriminant_analysis_classifier. \
                 sklearn_random_grid_search(100)
-            quadratic_discriminant_analysis_classifier =\
+            quadratic_discriminant_analysis_classifier = \
                 MyQuadraticDiscriminantAnalysis(x_train, t_train, x_test, t_test,
                                                 reg_param=best_reg_param, store_covariance=best_store_covariance)
             quadratic_discriminant_analysis_classifier.training()
@@ -196,6 +209,18 @@ def main():
                 accuracy_score(quadratic_discriminant_analysis_classifier.t_test,
                                quadratic_discriminant_analysis_classifier.train_predictions)))
 
+        # ====================== Gaussian Naive Bayes =====================
+        if classifier == 0 or classifier == 9:
+            gaussian_naive_bayes = MyNaiveBayes(x_train, t_train, x_test, t_test)
+
+            gaussian_naive_bayes.training()
+            print("Train accuracy : {:.4%}".format(gaussian_naive_bayes.classifier.score(
+                gaussian_naive_bayes.x_train, gaussian_naive_bayes.t_train)))
+
+            gaussian_naive_bayes.prediction()
+
+            print("Test accuracy : {:.4%}".format(
+                accuracy_score(gaussian_naive_bayes.t_test, gaussian_naive_bayes.train_predictions)))
     return
 
 

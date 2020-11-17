@@ -1,4 +1,5 @@
 from sklearn.model_selection import StratifiedKFold, cross_val_score
+from sklearn.decomposition import PCA
 
 
 class BaseClassifier:
