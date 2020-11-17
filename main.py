@@ -1,24 +1,28 @@
 import sys
 
+from matplotlib import pyplot
 from sklearn.metrics import accuracy_score
 from src.data.data_handler import DataHandler
 from sklearn.model_selection import StratifiedShuffleSplit
-
 from src.models.adaboost_classifier import MyAdaboostClassifier
-from src.models.discriminant_analysis import MyDiscriminantAnalysis
+from src.models.linear_discriminant_analysis import MyLinearDiscriminantAnalysis
 from src.models.neural_networks import MyNeuralNetwork
 from src.models.perceptron import MyPerceptron
 from src.models.logistic_regression import MyLogisticRegression
+from src.models.quadratic_discriminant_analysis import MyQuadraticDiscriminantAnalysis
 from src.models.support_vector_machines import MySVM
 from src.models.ridge_regression import MyRidgeRegression
+
+from scipy.stats import shapiro
+from scipy.stats import normaltest
 
 
 def main():
     if len(sys.argv) < 5:
         print("Usage: python data_handler.py train_data_input_filepath output_filepath classifier "
               "centered_normalized_data\n")
-        print("classifier : 0=>all, 1=>>neural networks, 2=>discriminant analysis, 3=>logistic,"
-              " 4=ridge, 5=>perceptron, 6=>SVM, 7=> AdaBoost\n")
+        print("classifier : 0=>all, 1=>>neural networks, 2=>linear discriminant analysis, 3=>logistic,"
+              " 4=ridge, 5=>perceptron, 6=>SVM, 7=> AdaBoost, 8=>quadratic discriminant analysis\n")
         print("centered_normalized_data : 0=>raw data, 1=>centered and normalized data\n")
         print("Exemple (Windows): python main.py data\\raw\\train\\leaf-classification-train.csv data\\processed 0 1\n")
         print("Exemple (Linux): python main.py data/raw/train/leaf-classification-train.csv data/processed 0 1\n")
@@ -33,7 +37,7 @@ def main():
             print("Incorrect value in centered_normalized_data parameter")
             return
 
-        if classifier < 0 or classifier > 7:
+        if classifier < 0 or classifier > 8:
             print("Incorrect value in classifier parameter")
             return
 
@@ -42,6 +46,20 @@ def main():
         dh.main()
         raw_data, data_normalized_centered, labels, species = \
             dh.read_all_output_files()
+
+        # We check that our data preprocessing was correctly done
+        print("Centered and normalized data mean :{:.4}".format(data_normalized_centered.mean()))
+        print("Centered and normalized data standard deviation :{:.4}".format(data_normalized_centered.std()))
+
+        # ============================= TESTING FOR NORMALITY =============================
+        p_total = 0
+        for i in range(0, len(data_normalized_centered[0])):
+            column = []
+            for j in range(0, len(data_normalized_centered)):
+                column.append(data_normalized_centered[j, i])
+            stat, p = normaltest(column)
+            p_total += p
+        print("Normaltest mean p={:.4}".format(p_total/len(data_normalized_centered)))
 
         # ============================== GENERATING DATASETS ==============================
         # Let's create a train and test dataset
@@ -72,13 +90,13 @@ def main():
             print("Test accuracy: {:.4%}".format(accuracy_score(neural_network_classifier.t_test,
                                                                 neural_network_classifier.train_predictions)))
 
-        # ======================== DISCRIMINANT ANALYSIS GRID SEARCH =======================
+        # ===================== LINEAR DISCRIMINANT ANALYSIS GRID SEARCH ===================
         if classifier == 0 or classifier == 2:
-            discriminant_analysis_classifier = MyDiscriminantAnalysis(x_train, t_train, x_test, t_test)
+            discriminant_analysis_classifier = MyLinearDiscriminantAnalysis(x_train, t_train, x_test, t_test)
             # best_shrinkage = discriminant_analysis_classifier.grid_search()
             best_shrinkage = discriminant_analysis_classifier.sklearn_random_grid_search(100)
-            discriminant_analysis_classifier = MyDiscriminantAnalysis(x_train, t_train, x_test, t_test,
-                                                                      shrinkage=best_shrinkage)
+            discriminant_analysis_classifier = MyLinearDiscriminantAnalysis(x_train, t_train, x_test, t_test,
+                                                                            shrinkage=best_shrinkage)
             discriminant_analysis_classifier.training()
             print("Train accuracy : {:.4%}".format(
                 discriminant_analysis_classifier.classifier.score(
@@ -157,6 +175,26 @@ def main():
             adaboost_classifier.prediction()
             print("Test accuracy: {:.4%}".format(accuracy_score(adaboost_classifier.t_test,
                                                                 adaboost_classifier.train_predictions)))
+
+        # =================== QUADRATIC DISCRIMINANT ANALYSIS GRID SEARCH ==================
+        if classifier == 0 or classifier == 8:
+            quadratic_discriminant_analysis_classifier = MyQuadraticDiscriminantAnalysis(x_train, t_train,
+                                                                                         x_test,t_test)
+            # best_shrinkage = discriminant_analysis_classifier.grid_search()
+            best_reg_param, best_store_covariance = quadratic_discriminant_analysis_classifier.\
+                sklearn_random_grid_search(100)
+            quadratic_discriminant_analysis_classifier =\
+                MyQuadraticDiscriminantAnalysis(x_train, t_train, x_test, t_test,
+                                                reg_param=best_reg_param, store_covariance=best_store_covariance)
+            quadratic_discriminant_analysis_classifier.training()
+            print("Train accuracy : {:.4%}".format(
+                quadratic_discriminant_analysis_classifier.classifier.score(
+                    quadratic_discriminant_analysis_classifier.x_train,
+                    quadratic_discriminant_analysis_classifier.t_train)))
+            quadratic_discriminant_analysis_classifier.prediction()
+            print("Test accuracy : {:.4%}".format(
+                accuracy_score(quadratic_discriminant_analysis_classifier.t_test,
+                               quadratic_discriminant_analysis_classifier.train_predictions)))
 
     return
 

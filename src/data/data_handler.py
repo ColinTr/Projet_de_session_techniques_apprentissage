@@ -6,11 +6,11 @@ from sklearn.preprocessing import LabelEncoder
 
 
 def center_data(data):
-    return data.sub(data.mean(axis=0), axis=1)
+    return data - data.mean()
 
 
 def normalize_data(data):
-    return data.div(data.std(axis=0), axis=1)
+    return data.div(data.std(axis=0, ddof=0), axis=1)
 
 
 def parse_csv_file(filepath):
@@ -63,7 +63,7 @@ class DataHandler:
 
         # We create the export files paths
         data_fp = self.output_filepath + '/data-processed-' + filename
-        centered_normalized_data_fp =\
+        centered_normalized_data_fp = \
             self.output_filepath + '/data-centered-normalized-processed-' + filename
         labels_fp = self.output_filepath + '/labels-processed-' + filename
         species_fp = self.output_filepath + '/species-processed-' + filename

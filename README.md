@@ -29,7 +29,8 @@ Project Organization
     │   ├── models         <- Scripts to train models and then use trained models to make predictions
     │   │   ├── adaboost_classifier.py
     │   │   ├── base_classifier.py
-    │   │   ├── discriminant_analysis.py
+    │   │   ├── linear_discriminant_analysis.py
+    │   │   ├── quadratic_discriminant_analysis.py
     │   │   ├── logistic_regression.py
     │   │   ├── neural_networks.py
     │   │   ├── perceptron.py

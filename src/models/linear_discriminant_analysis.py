@@ -6,7 +6,7 @@ from sklearn.model_selection import RandomizedSearchCV
 from src.models.base_classifier import BaseClassifier
 
 
-class MyDiscriminantAnalysis(BaseClassifier):
+class MyLinearDiscriminantAnalysis(BaseClassifier):
     def __init__(self, x_train, t_train, x_test, t_test, reg_param=0.0, solver='lsqr',
                  shrinkage='None'):
         """Note : Shrinkage works only with lsqr and eigen solvers"""
