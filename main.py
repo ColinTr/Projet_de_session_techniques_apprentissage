@@ -16,7 +16,7 @@ from src.models.naive_bayes import MyNaiveBayes
 from scipy.stats import normaltest
 
 
-def appliquer_pca_sur_donnees(data):
+def apply_pca_on_data(data):
     pca = PCA(n_components='mle', svd_solver='full')
     return pca.fit_transform(data)
 
@@ -60,8 +60,8 @@ def main():
 
         if use_pca == 1:
             data_descriptors_before = raw_data.shape[1]
-            raw_data = appliquer_pca_sur_donnees(raw_data)
-            data_normalized_centered = appliquer_pca_sur_donnees(data_normalized_centered)
+            raw_data = apply_pca_on_data(raw_data)
+            data_normalized_centered = apply_pca_on_data(data_normalized_centered)
             if centered_normalized_bool == 0:
                 print("raw_data : nombre de dimensions avant PCA: " +
                       '{:1.0f}'.format(data_descriptors_before) + " après PCA: " +
@@ -224,6 +224,10 @@ def main():
         # ====================== Gaussian Naive Bayes =====================
         if classifier == 0 or classifier == 9:
             gaussian_naive_bayes = MyNaiveBayes(x_train, t_train, x_test, t_test)
+
+            best_smoothing = gaussian_naive_bayes.sklearn_random_grid_search(50)
+
+            gaussian_naive_bayes = MyNaiveBayes(x_train, t_train, x_test, t_test, var_smoothing=best_smoothing)
 
             gaussian_naive_bayes.training()
             print("Train accuracy : {:.4%}".format(gaussian_naive_bayes.classifier.score(
