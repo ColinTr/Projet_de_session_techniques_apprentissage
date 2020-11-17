@@ -19,7 +19,7 @@ class MyQuadraticDiscriminantAnalysis(BaseClassifier):
         distributions = dict(reg_param=np.linspace(0.000001, 1, 50),
                              store_covariance=[True, False])
 
-        random_search = RandomizedSearchCV(self.classifier, distributions, n_jobs=-1, n_iter=n_iter)
+        random_search = RandomizedSearchCV(self.classifier, distributions, n_jobs=-1, n_iter=n_iter, cv=5)
 
         search = random_search.fit(self.x_train, self.t_train)
 

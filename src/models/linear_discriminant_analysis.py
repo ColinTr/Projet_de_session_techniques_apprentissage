@@ -8,7 +8,7 @@ from src.models.base_classifier import BaseClassifier
 
 class MyLinearDiscriminantAnalysis(BaseClassifier):
     def __init__(self, x_train, t_train, x_test, t_test, solver='lsqr',
-                 shrinkage='None'):
+                 shrinkage=0):
         """Note : Shrinkage works only with lsqr and eigen solvers"""
         super().__init__(x_train, t_train, x_test, t_test, 5)
         self.solver = solver
@@ -19,7 +19,7 @@ class MyLinearDiscriminantAnalysis(BaseClassifier):
         print("======= Starting Linear discriminant grid search ========")
         distributions = dict(shrinkage=np.linspace(0.0, 1, 100))
 
-        random_search = RandomizedSearchCV(self.classifier, distributions, n_jobs=-1, n_iter=n_iter)
+        random_search = RandomizedSearchCV(self.classifier, distributions, n_jobs=-1, n_iter=n_iter, cv=5)
 
         search = random_search.fit(self.x_train, self.t_train)
 

@@ -9,7 +9,11 @@ def center_data(data):
     return data - data.mean()
 
 
-def normalize_data(data):
+def normalize_data_by_standard_deviation(data):
+    return data.div(data.std(axis=0, ddof=0), axis=1)
+
+
+def normalize_data_by_min_max(data):
     return data.div(data.std(axis=0, ddof=0), axis=1)
 
 
@@ -38,7 +42,7 @@ class DataHandler:
         self.encode_species(self.data)
 
         data_centered = center_data(self.data)
-        self.data_normalized_centered = normalize_data(data_centered)
+        self.data_normalized_centered = normalize_data_by_standard_deviation(data_centered)
 
         self.export_data_into_csv()
 

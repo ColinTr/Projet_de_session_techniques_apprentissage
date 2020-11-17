@@ -21,7 +21,7 @@ class MyPerceptron(BaseClassifier):
         distributions = dict(alpha=np.linspace(0.000000001, 2, 10),
                              eta0=np.linspace(0.0001, 1, 10))
 
-        random_search = RandomizedSearchCV(self.classifier, distributions, n_jobs=-1, n_iter=n_iter)
+        random_search = RandomizedSearchCV(self.classifier, distributions, n_jobs=-1, n_iter=n_iter, cv=5)
 
         search = random_search.fit(self.x_train, self.t_train)
 
