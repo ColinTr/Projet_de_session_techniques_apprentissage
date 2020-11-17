@@ -1,10 +1,9 @@
 import sys
 
 from sklearn.metrics import accuracy_score
-from src.data.data_handler import DataHandler
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.decomposition import PCA
-
+from src.data.data_handler import DataHandler
 from src.models.adaboost_classifier import MyAdaboostClassifier
 from src.models.linear_discriminant_analysis import MyLinearDiscriminantAnalysis
 from src.models.neural_networks import MyNeuralNetwork
@@ -14,11 +13,10 @@ from src.models.quadratic_discriminant_analysis import MyQuadraticDiscriminantAn
 from src.models.support_vector_machines import MySVM
 from src.models.ridge_regression import MyRidgeRegression
 from src.models.naive_bayes import MyNaiveBayes
-
 from scipy.stats import normaltest
 
 
-def apply_pca_on_data(data):
+def appliquer_pca_sur_donnees(data):
     pca = PCA(n_components='mle', svd_solver='full')
     return pca.fit_transform(data)
 
@@ -27,12 +25,13 @@ def main():
     if len(sys.argv) < 6:
         print("Usage: python data_handler.py train_data_input_filepath output_filepath classifier "
               "centered_normalized_data use_pca\n")
-        print("classifier : 0=>all, 1=>>neural networks, 2=>linear discriminant analysis, 3=>logistic,"
-              " 4=ridge, 5=>perceptron, 6=>SVM, 7=> AdaBoost, 8=>quadratic discriminant analysis\n")
+        print("classifier : 0=>All, 1=>Neural Networks, 2=>Linear Discriminant Analysis, 3=>Logistic Regression,"
+              " 4=Ridge, 5=>Perceptron, 6=>SVM, 7=> AdaBoost, 8=>Quadratic Discriminant Analysis, 9=>Naive Bayes\n")
         print("centered_normalized_data : 0=>raw data, 1=>centered and normalized data\n")
         print("use_pca : 0=>no, 1=>yes\n")
-        print("Exemple (Windows): python main.py data\\raw\\train\\leaf-classification-train.csv data\\processed 0 1\n")
-        print("Exemple (Linux): python main.py data/raw/train/leaf-classification-train.csv data/processed 0 1\n")
+        print(
+            "Exemple (Windows): python main.py data\\raw\\train\\leaf-classification-train.csv data\\processed 0 1 0\n")
+        print("Exemple (Linux): python main.py data/raw/train/leaf-classification-train.csv data/processed 0 1 0\n")
 
     else:
         data_input_filepath = sys.argv[1]
@@ -42,15 +41,15 @@ def main():
         use_pca = int(sys.argv[5])
 
         if centered_normalized_bool != 0 and centered_normalized_bool != 1:
-            print("Incorrect value in centered_normalized_data parameter")
+            print("Valeur incorrecte dans le paramètre centered_normalized_bool")
             return
 
         if use_pca != 0 and use_pca != 1:
-            print("Incorrect value in use_pca parameter")
+            print("Valeur incorrecte dans le paramètre use_pca")
             return
 
         if classifier < 0 or classifier > 9:
-            print("Incorrect value in classifier parameter")
+            print("Valeur incorrecte dans le paramètre classifier")
             return
 
         print("=============== Reading and handling data ===============")
@@ -61,18 +60,20 @@ def main():
 
         if use_pca == 1:
             data_descriptors_before = raw_data.shape[1]
-            raw_data = apply_pca_on_data(raw_data)
-            data_normalized_centered = apply_pca_on_data(data_normalized_centered)
-            print("raw_data : number of descriptors before PCA: " +
-                  '{:1.0f}'.format(data_descriptors_before) + " after PCA: " +
-                  '{:1.0f}'.format(raw_data.shape[1]))
-            print("data_normalized_centered : number of descriptors before PCA: " +
-                  '{:1.0f}'.format(data_descriptors_before) + " after PCA: " +
-                  '{:1.0f}'.format(data_normalized_centered.shape[1]))
+            raw_data = appliquer_pca_sur_donnees(raw_data)
+            data_normalized_centered = appliquer_pca_sur_donnees(data_normalized_centered)
+            if centered_normalized_bool == 0:
+                print("raw_data : nombre de dimensions avant PCA: " +
+                      '{:1.0f}'.format(data_descriptors_before) + " après PCA: " +
+                      '{:1.0f}'.format(raw_data.shape[1]))
+            if centered_normalized_bool == 1:
+                print("data_normalized_centered : nombre de dimensions avant PCA: " +
+                      '{:1.0f}'.format(data_descriptors_before) + " après PCA: " +
+                      '{:1.0f}'.format(data_normalized_centered.shape[1]))
 
-        # We check that our data preprocessing was correctly done
-        print("Centered and normalized data mean :{:.4}".format(data_normalized_centered.mean()))
-        print("Centered and normalized data standard deviation :{:.4}".format(data_normalized_centered.std()))
+        # On vérifie que nos données ont été correctement centrées/normées
+        print("Moyenne des données centrées+normalisées :{:.4}".format(data_normalized_centered.mean()))
+        print("Déviation standard des données centrées+normalisées :{:.4}".format(data_normalized_centered.std()))
 
         # ============================= TESTING FOR NORMALITY =============================
         p_total = 0
@@ -82,7 +83,7 @@ def main():
                 column.append(data_normalized_centered[j, i])
             stat, p = normaltest(column)
             p_total += p
-        print("Normaltest mean p={:.4}".format(p_total / len(data_normalized_centered)))
+        print("Normaltest p moyen={:.4}".format(p_total / len(data_normalized_centered)))
 
         # ============================== GENERATING DATASETS ==============================
         # Let's create a train and test dataset

@@ -3,6 +3,13 @@ IFT712_Projet_de_session
 
 Projet Session Techniques Apprentissage
 
+Il est possible de lancer ce programme à partir de la commande suivante :
+
+Exemple (Windows): python main.py data\raw\train\leaf-classification-train.csv data\processed 0 1 0
+
+Exemple (Linux): python main.py data/raw/train/leaf-classification-train.csv data/processed 0 1 0
+
+
 Project Organization
 ------------
 

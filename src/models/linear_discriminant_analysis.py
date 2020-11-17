@@ -7,13 +7,12 @@ from src.models.base_classifier import BaseClassifier
 
 
 class MyLinearDiscriminantAnalysis(BaseClassifier):
-    def __init__(self, x_train, t_train, x_test, t_test, reg_param=0.0, solver='lsqr',
+    def __init__(self, x_train, t_train, x_test, t_test, solver='lsqr',
                  shrinkage='None'):
         """Note : Shrinkage works only with lsqr and eigen solvers"""
         super().__init__(x_train, t_train, x_test, t_test, 5)
         self.solver = solver
         self.shrinkage = shrinkage
-        self.reg_param = reg_param
         self.classifier = LinearDiscriminantAnalysis(solver=self.solver, shrinkage=self.shrinkage)
 
     def sklearn_random_grid_search(self, n_iter):
