@@ -1,6 +1,5 @@
 import sys
 
-from matplotlib import pyplot
 from sklearn.metrics import accuracy_score
 from src.data.data_handler import DataHandler
 from sklearn.model_selection import StratifiedShuffleSplit
@@ -21,19 +20,17 @@ from scipy.stats import normaltest
 
 def apply_pca_on_data(data):
     pca = PCA(n_components='mle', svd_solver='full')
-    print("Number of descriptors before PCA: " + '{:1.0f}'.format(data.shape[1]))
-    data = pca.fit_transform(data)
-    print("Number of descriptors after PCA: " + '{:1.0f}'.format(data.shape[1]))
-    return data
+    return pca.fit_transform(data)
 
 
 def main():
-    if len(sys.argv) < 5:
+    if len(sys.argv) < 6:
         print("Usage: python data_handler.py train_data_input_filepath output_filepath classifier "
-              "centered_normalized_data\n")
+              "centered_normalized_data use_pca\n")
         print("classifier : 0=>all, 1=>>neural networks, 2=>linear discriminant analysis, 3=>logistic,"
               " 4=ridge, 5=>perceptron, 6=>SVM, 7=> AdaBoost, 8=>quadratic discriminant analysis\n")
         print("centered_normalized_data : 0=>raw data, 1=>centered and normalized data\n")
+        print("use_pca : 0=>no, 1=>yes\n")
         print("Exemple (Windows): python main.py data\\raw\\train\\leaf-classification-train.csv data\\processed 0 1\n")
         print("Exemple (Linux): python main.py data/raw/train/leaf-classification-train.csv data/processed 0 1\n")
 
@@ -42,9 +39,14 @@ def main():
         output_filepath = sys.argv[2]
         classifier = int(sys.argv[3])
         centered_normalized_bool = int(sys.argv[4])
+        use_pca = int(sys.argv[5])
 
         if centered_normalized_bool != 0 and centered_normalized_bool != 1:
             print("Incorrect value in centered_normalized_data parameter")
+            return
+
+        if use_pca != 0 and use_pca != 1:
+            print("Incorrect value in use_pca parameter")
             return
 
         if classifier < 0 or classifier > 9:
@@ -57,7 +59,16 @@ def main():
         raw_data, data_normalized_centered, labels, species = \
             dh.read_all_output_files()
 
-        raw_data = apply_pca_on_data(raw_data)
+        if use_pca == 1:
+            data_descriptors_before = raw_data.shape[1]
+            raw_data = apply_pca_on_data(raw_data)
+            data_normalized_centered = apply_pca_on_data(data_normalized_centered)
+            print("raw_data : number of descriptors before PCA: " +
+                  '{:1.0f}'.format(data_descriptors_before) + " after PCA: " +
+                  '{:1.0f}'.format(raw_data.shape[1]))
+            print("data_normalized_centered : number of descriptors before PCA: " +
+                  '{:1.0f}'.format(data_descriptors_before) + " after PCA: " +
+                  '{:1.0f}'.format(data_normalized_centered.shape[1]))
 
         # We check that our data preprocessing was correctly done
         print("Centered and normalized data mean :{:.4}".format(data_normalized_centered.mean()))
@@ -221,6 +232,7 @@ def main():
 
             print("Test accuracy : {:.4%}".format(
                 accuracy_score(gaussian_naive_bayes.t_test, gaussian_naive_bayes.train_predictions)))
+
     return
 
 

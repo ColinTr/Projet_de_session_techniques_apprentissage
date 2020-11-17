@@ -11,7 +11,8 @@ class MyQuadraticDiscriminantAnalysis(BaseClassifier):
         super().__init__(x_train, t_train, x_test, t_test, 5)
         self.reg_param = reg_param
         self.store_covariance = store_covariance
-        self.classifier = QuadraticDiscriminantAnalysis(reg_param=self.reg_param, store_covariance=self.store_covariance)
+        self.classifier = QuadraticDiscriminantAnalysis(reg_param=self.reg_param,
+                                                        store_covariance=self.store_covariance)
 
     def sklearn_random_grid_search(self, n_iter):
         print("====== Starting Quadratic discriminant grid search ======")
@@ -43,7 +44,8 @@ class MyQuadraticDiscriminantAnalysis(BaseClassifier):
             for store_covariance in [True, False]:
                 self.store_covariance = store_covariance
 
-                self.classifier = QuadraticDiscriminantAnalysis(reg_param=self.reg_param, store_covariance=self.store_covariance)
+                self.classifier = QuadraticDiscriminantAnalysis(reg_param=self.reg_param,
+                                                                store_covariance=self.store_covariance)
                 mean_cross_validation_accuracy = self.cross_validation()
 
                 if mean_cross_validation_accuracy == 100:
