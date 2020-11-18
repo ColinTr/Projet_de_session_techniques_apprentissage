@@ -31,21 +31,26 @@ class MySVM(BaseClassifier):
 
         return best_c, best_gamma
 
-    def grid_search(self):
+    def grid_search(self, do_cross_validation=True):
         print("================ Starting SVM grid search ===============")
         best_accuracy = 0
         best_c = None
         best_gamma = None
 
-        for c_i in np.linspace(0.01, 1000, 20):
+        for c_i in np.linspace(0.01, 100, 10):
             self.c = c_i
+            print(c_i)
 
-            for gamma_i in np.linspace(0.00001, 1, 20):
+            for gamma_i in np.linspace(0.00001, 1, 10):
                 self.gamma = gamma_i
 
                 self.classifier = SVC(C=self.c, gamma=self.gamma, kernel=self.kernel)
 
-                mean_cross_validation_accuracy = self.cross_validation()
+                if do_cross_validation:
+                    mean_cross_validation_accuracy = self.cross_validation()
+                else:
+                    self.training()
+                    mean_cross_validation_accuracy = self.classifier.score(self.x_train, self.t_train)
 
                 if mean_cross_validation_accuracy == 100:
                     print("All train data was correctly classified during cross-validation !")

@@ -9,7 +9,7 @@ from src.models.base_classifier import BaseClassifier
 class MyNeuralNetwork(BaseClassifier):
     def __init__(self, x_train, t_train, x_test, t_test, hidden_layer_sizes=(100, 100), lamb=0.0001, max_iter=200,
                  solver='adam', learning_rate='constant', activation='relu'):
-        super().__init__(x_train, t_train, x_test, t_test, 5)
+        super().__init__(x_train, t_train, x_test, t_test, 4)
         self.hidden_layer_sizes = hidden_layer_sizes
         self.learning_rate = learning_rate
         self.activation = activation

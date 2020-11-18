@@ -8,7 +8,7 @@ from src.models.base_classifier import BaseClassifier
 
 class MyPerceptron(BaseClassifier):
     def __init__(self, x_train, t_train, x_test, t_test, lamb=0.0001, max_iterations=1000, penalty='None', eta0=1):
-        super().__init__(x_train, t_train, x_test, t_test, 6)
+        super().__init__(x_train, t_train, x_test, t_test, 4)
         self.max_iterations = max_iterations
         self.penalty = penalty
         self.eta0 = eta0

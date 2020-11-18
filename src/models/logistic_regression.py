@@ -8,7 +8,7 @@ from src.models.base_classifier import BaseClassifier
 
 class MyLogisticRegression(BaseClassifier):
     def __init__(self, x_train, t_train, x_test, t_test, max_iterations=1000, penalty='l2', is_dual=False, c=0.001):
-        super().__init__(x_train, t_train, x_test, t_test, 6)
+        super().__init__(x_train, t_train, x_test, t_test, 4)
         self.max_iterations = max_iterations
         self.penalty = penalty
         self.dual = is_dual

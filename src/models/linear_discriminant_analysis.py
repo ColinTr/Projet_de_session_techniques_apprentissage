@@ -10,7 +10,7 @@ class MyLinearDiscriminantAnalysis(BaseClassifier):
     def __init__(self, x_train, t_train, x_test, t_test, solver='lsqr',
                  shrinkage=0):
         """Note : Shrinkage works only with lsqr and eigen solvers"""
-        super().__init__(x_train, t_train, x_test, t_test, 5)
+        super().__init__(x_train, t_train, x_test, t_test, 4)
         self.solver = solver
         self.shrinkage = shrinkage
         self.classifier = LinearDiscriminantAnalysis(solver=self.solver, shrinkage=self.shrinkage)

@@ -8,7 +8,7 @@ from src.models.base_classifier import BaseClassifier
 
 class MyRidgeRegression(BaseClassifier):
     def __init__(self, x_train, t_train, x_test, t_test, max_iterations=1000, lamb=1.0):
-        super().__init__(x_train, t_train, x_test, t_test, 6)
+        super().__init__(x_train, t_train, x_test, t_test, 4)
         self.max_iterations = max_iterations
         self.lamb = lamb
         self.classifier = RidgeClassifier(max_iter=self.max_iterations, alpha=self.lamb)

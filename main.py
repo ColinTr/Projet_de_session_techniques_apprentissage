@@ -17,7 +17,6 @@ from src.models.ridge_regression import MyRidgeRegression
 from src.models.naive_bayes import MyNaiveBayes
 from scipy.stats import normaltest
 from sklearn.preprocessing import MinMaxScaler
-from matplotlib import pyplot as plt
 
 
 def apply_pca_on_data(data):
@@ -27,7 +26,7 @@ def apply_pca_on_data(data):
 
 def main():
     if len(sys.argv) < 7:
-        print("Usage: python data_handler.py train_data_input_filepath output_filepath classifier grid_search"
+        print("Usage: python main.py train_data_input_filepath output_filepath classifier grid_search"
               "data_preprocessing use_pca\n")
         print("classifier : 0=>All, 1=>Neural Networks, 2=>Linear Discriminant Analysis, 3=>Logistic Regression,"
               " 4=Ridge, 5=>Perceptron, 6=>SVM, 7=> AdaBoost, 8=>Quadratic Discriminant Analysis, 9=>Naive Bayes\n")
@@ -73,8 +72,6 @@ def main():
             scaler = MinMaxScaler(feature_range=(-1, 1))
             scaler.fit(data_normalized_centered)
             data_normalized_centered = scaler.transform(data_normalized_centered)
-            data_normalized_centered = data_normalized_centered - data_normalized_centered.mean()
-
 
         if use_pca == 1:
             data_descriptors_before = raw_data.shape[1]
@@ -112,7 +109,7 @@ def main():
             train_index, test_index = next(sss.split(raw_data, labels))
             x_train, x_test = raw_data[train_index], raw_data[test_index]
             t_train, t_test = labels[train_index].T[0], labels[test_index].T[0]
-        if data_preprocessing == 1 or data_preprocessing==2:
+        if data_preprocessing == 1 or data_preprocessing == 2:
             train_index, test_index = next(sss.split(data_normalized_centered, labels))
             x_train, x_test = data_normalized_centered[train_index], data_normalized_centered[test_index]
             t_train, t_test = labels[train_index].T[0], labels[test_index].T[0]
@@ -140,7 +137,7 @@ def main():
             discriminant_analysis_classifier = MyLinearDiscriminantAnalysis(x_train, t_train, x_test, t_test)
             if grid_search == 1:
                 # best_shrinkage = discriminant_analysis_classifier.grid_search()
-                best_shrinkage = discriminant_analysis_classifier.sklearn_random_grid_search(100)
+                best_shrinkage = discriminant_analysis_classifier.sklearn_random_grid_search(50)
                 discriminant_analysis_classifier = MyLinearDiscriminantAnalysis(x_train, t_train, x_test, t_test,
                                                                                 shrinkage=best_shrinkage)
             discriminant_analysis_classifier.training()
@@ -175,7 +172,7 @@ def main():
             ridge_classifier = MyRidgeRegression(x_train, t_train, x_test, t_test)
             if grid_search == 1:
                 # best_lamb = ridge_classifier.grid_search()
-                best_lamb = ridge_classifier.sklearn_random_grid_search(100)
+                best_lamb = ridge_classifier.sklearn_random_grid_search(30)
                 ridge_classifier = MyRidgeRegression(x_train, t_train, x_test, t_test, lamb=best_lamb)
             ridge_classifier.training()
             print("Train accuracy : {:.4%}".format(
@@ -242,7 +239,7 @@ def main():
             if grid_search == 1:
                 # best_shrinkage = discriminant_analysis_classifier.grid_search()
                 best_reg_param, best_store_covariance = quadratic_discriminant_analysis_classifier. \
-                    sklearn_random_grid_search(100)
+                    sklearn_random_grid_search(35)
                 quadratic_discriminant_analysis_classifier = \
                     MyQuadraticDiscriminantAnalysis(x_train, t_train, x_test, t_test,
                                                     reg_param=best_reg_param, store_covariance=best_store_covariance)

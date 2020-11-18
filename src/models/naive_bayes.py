@@ -6,7 +6,7 @@ import numpy as np
 
 class MyNaiveBayes(BaseClassifier):
     def __init__(self, x_train, t_train, x_test, t_test, var_smoothing=1e-9):
-        super().__init__(x_train, t_train, x_test, t_test, 5)
+        super().__init__(x_train, t_train, x_test, t_test, 4)
         self.smoothing = var_smoothing
         self.classifier = GaussianNB()
 

@@ -8,7 +8,7 @@ from src.models.base_classifier import BaseClassifier
 
 class MyQuadraticDiscriminantAnalysis(BaseClassifier):
     def __init__(self, x_train, t_train, x_test, t_test, reg_param=0.0, store_covariance=False):
-        super().__init__(x_train, t_train, x_test, t_test, 5)
+        super().__init__(x_train, t_train, x_test, t_test, 4)
         self.reg_param = reg_param
         self.store_covariance = store_covariance
         self.classifier = QuadraticDiscriminantAnalysis(reg_param=self.reg_param,
