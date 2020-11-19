@@ -102,7 +102,13 @@ def main():
                 best_lamb = ridge_classifier.sklearn_random_grid_search(30)
                 ridge_classifier = MyRidgeRegression(x_train, t_train, x_test, t_test, lamb=best_lamb)
 
-            print_results(ridge_classifier, x_test, t_test)
+            ridge_classifier.training()
+            print("Train accuracy : {:.4%}".format(ridge_classifier.classifier.score(
+                ridge_classifier.x_train, ridge_classifier.t_train)))
+
+            ridge_classifier.prediction()
+            print("Test accuracy : {:.4%}".format(
+                accuracy_score(ridge_classifier.t_test, ridge_classifier.train_predictions)))
 
         # ============================= PERCEPTRON GRID SEARCH =============================
         if classifier == 0 or classifier == 5:
@@ -113,7 +119,13 @@ def main():
                 best_lamb, best_eta0 = perceptron_classifier.sklearn_random_grid_search(50)
                 perceptron_classifier = MyPerceptron(x_train, t_train, x_test, t_test, lamb=best_lamb, eta0=best_eta0)
 
-            print_results(perceptron_classifier, x_test, t_test)
+            perceptron_classifier.training()
+            print("Train accuracy : {:.4%}".format(perceptron_classifier.classifier.score(
+                perceptron_classifier.x_train, perceptron_classifier.t_train)))
+
+            perceptron_classifier.prediction()
+            print("Test accuracy : {:.4%}".format(
+                accuracy_score(perceptron_classifier.t_test, perceptron_classifier.train_predictions)))
 
         # ================================= SVM GRID SEARCH ================================
         if classifier == 0 or classifier == 6:

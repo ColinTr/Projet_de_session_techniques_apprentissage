@@ -11,7 +11,7 @@ class MySVM(BaseClassifier):
         self.kernel = kernel
         self.gamma = gamma
         self.c = c
-        self.classifier = SVC(C=self.c, gamma=self.gamma, kernel=self.kernel)
+        self.classifier = SVC(C=self.c, gamma=self.gamma, kernel=self.kernel, probability=True)
 
     def sklearn_random_grid_search(self, n_iter):
         print("================ Starting SVM grid search ===============")
@@ -44,7 +44,7 @@ class MySVM(BaseClassifier):
             for gamma_i in np.linspace(0.00001, 1, 10):
                 self.gamma = gamma_i
 
-                self.classifier = SVC(C=self.c, gamma=self.gamma, kernel=self.kernel)
+                self.classifier = SVC(C=self.c, gamma=self.gamma, kernel=self.kernel, probability=True)
 
                 if do_cross_validation:
                     mean_cross_validation_accuracy = self.cross_validation()
