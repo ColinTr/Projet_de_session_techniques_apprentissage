@@ -1,6 +1,6 @@
 import sys
 
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, log_loss
 from sklearn.tree import DecisionTreeClassifier
 
 from src.models.adaboost_classifier import MyAdaboostClassifier
@@ -67,13 +67,8 @@ def main():
                 best_lamb, best_hidden_layer_sizes = neural_network_classifier.sklearn_random_grid_search(20)
                 neural_network_classifier = MyNeuralNetwork(x_train, t_train, x_test, t_test, lamb=best_lamb,
                                                             hidden_layer_sizes=best_hidden_layer_sizes)
-            neural_network_classifier.training()
-            print("Train accuracy : {:.4%}".format(
-                neural_network_classifier.classifier.score(neural_network_classifier.x_train,
-                                                           neural_network_classifier.t_train)))
-            neural_network_classifier.prediction()
-            print("Test accuracy: {:.4%}".format(accuracy_score(neural_network_classifier.t_test,
-                                                                neural_network_classifier.train_predictions)))
+
+            print_results(neural_network_classifier, x_test, t_test)
 
         # ===================== LINEAR DISCRIMINANT ANALYSIS GRID SEARCH ===================
         if classifier == 0 or classifier == 2:
@@ -84,14 +79,8 @@ def main():
                 best_shrinkage = discriminant_analysis_classifier.sklearn_random_grid_search(50)
                 discriminant_analysis_classifier = MyLinearDiscriminantAnalysis(x_train, t_train, x_test, t_test,
                                                                                 shrinkage=best_shrinkage)
-            discriminant_analysis_classifier.training()
-            print("Train accuracy : {:.4%}".format(
-                discriminant_analysis_classifier.classifier.score(
-                    discriminant_analysis_classifier.x_train, discriminant_analysis_classifier.t_train)))
-            discriminant_analysis_classifier.prediction()
-            print("Test accuracy : {:.4%}".format(
-                accuracy_score(discriminant_analysis_classifier.t_test,
-                               discriminant_analysis_classifier.train_predictions)))
+
+            print_results(discriminant_analysis_classifier, x_test, t_test)
 
         # ========================= LOGISTIC REGRESSION GRID SEARCH ========================
         if classifier == 0 or classifier == 3:
@@ -101,14 +90,8 @@ def main():
                 # best_c = logistic_regression_classifier.grid_search()
                 best_c = logistic_regression_classifier.sklearn_random_grid_search(30)
                 logistic_regression_classifier = MyLogisticRegression(x_train, t_train, x_test, t_test, c=best_c)
-            logistic_regression_classifier.training()
-            print("Train accuracy : {:.4%}".format(
-                logistic_regression_classifier.classifier.score(logistic_regression_classifier.x_train,
-                                                                logistic_regression_classifier.t_train)))
-            logistic_regression_classifier.prediction()
-            print("Test accuracy : {:.4%}".format(
-                accuracy_score(logistic_regression_classifier.t_test, logistic_regression_classifier.
-                               train_predictions)))
+
+            print_results(logistic_regression_classifier, x_test, t_test)
 
         # =========================== RIDGE REGRESSION GRID SEARCH =========================
         if classifier == 0 or classifier == 4:
@@ -118,12 +101,8 @@ def main():
                 # best_lamb = ridge_classifier.grid_search()
                 best_lamb = ridge_classifier.sklearn_random_grid_search(30)
                 ridge_classifier = MyRidgeRegression(x_train, t_train, x_test, t_test, lamb=best_lamb)
-            ridge_classifier.training()
-            print("Train accuracy : {:.4%}".format(
-                ridge_classifier.classifier.score(ridge_classifier.x_train, ridge_classifier.t_train)))
-            ridge_classifier.prediction()
-            print("Test accuracy : {:.4%}".format(
-                accuracy_score(ridge_classifier.t_test, ridge_classifier.train_predictions)))
+
+            print_results(ridge_classifier, x_test, t_test)
 
         # ============================= PERCEPTRON GRID SEARCH =============================
         if classifier == 0 or classifier == 5:
@@ -133,12 +112,8 @@ def main():
                 # best_lamb, best_eta0 = perceptron_classifier.grid_search()
                 best_lamb, best_eta0 = perceptron_classifier.sklearn_random_grid_search(50)
                 perceptron_classifier = MyPerceptron(x_train, t_train, x_test, t_test, lamb=best_lamb, eta0=best_eta0)
-            perceptron_classifier.training()
-            print("Train accuracy : {:.4%}".format(
-                perceptron_classifier.classifier.score(perceptron_classifier.x_train, perceptron_classifier.t_train)))
-            perceptron_classifier.prediction()
-            print("Test accuracy: {:.4%}".format(accuracy_score(perceptron_classifier.t_test,
-                                                                perceptron_classifier.train_predictions)))
+
+            print_results(perceptron_classifier, x_test, t_test)
 
         # ================================= SVM GRID SEARCH ================================
         if classifier == 0 or classifier == 6:
@@ -148,12 +123,8 @@ def main():
                 # best_c, best_gamma = svm_classifier.grid_search()
                 best_c, best_gamma = svm_classifier.sklearn_random_grid_search(50)
                 svm_classifier = MySVM(x_train, t_train, x_test, t_test, c=best_c, gamma=best_gamma)
-            svm_classifier.training()
-            print("Train accuracy : {:.4%}".format(svm_classifier.classifier.score(svm_classifier.x_train,
-                                                                                   svm_classifier.t_train)))
-            svm_classifier.prediction()
-            print("Test accuracy: {:.4%}".format(accuracy_score(svm_classifier.t_test,
-                                                                svm_classifier.train_predictions)))
+
+            print_results(svm_classifier, x_test, t_test)
 
         # ============================== ADABOOST GRID SEARCH ==============================
         if classifier == 0 or classifier == 7:
@@ -168,12 +139,8 @@ def main():
                 adaboost_classifier = MyAdaboostClassifier(x_train, t_train, x_test, t_test, best_base_estimator,
                                                            learning_rate=best_learning_rate,
                                                            n_estimators=best_n_estimators)
-            adaboost_classifier.training()
-            print("Train accuracy : {:.4%}".format(adaboost_classifier.classifier.score(adaboost_classifier.x_train,
-                                                                                        adaboost_classifier.t_train)))
-            adaboost_classifier.prediction()
-            print("Test accuracy: {:.4%}".format(accuracy_score(adaboost_classifier.t_test,
-                                                                adaboost_classifier.train_predictions)))
+
+            print_results(adaboost_classifier, x_test, t_test)
 
         # =================== QUADRATIC DISCRIMINANT ANALYSIS GRID SEARCH ==================
         if classifier == 0 or classifier == 8:
@@ -187,15 +154,8 @@ def main():
                 quadratic_discriminant_analysis_classifier = \
                     MyQuadraticDiscriminantAnalysis(x_train, t_train, x_test, t_test,
                                                     reg_param=best_reg_param, store_covariance=best_store_covariance)
-            quadratic_discriminant_analysis_classifier.training()
-            print("Train accuracy : {:.4%}".format(
-                quadratic_discriminant_analysis_classifier.classifier.score(
-                    quadratic_discriminant_analysis_classifier.x_train,
-                    quadratic_discriminant_analysis_classifier.t_train)))
-            quadratic_discriminant_analysis_classifier.prediction()
-            print("Test accuracy : {:.4%}".format(
-                accuracy_score(quadratic_discriminant_analysis_classifier.t_test,
-                               quadratic_discriminant_analysis_classifier.train_predictions)))
+
+            print_results(quadratic_discriminant_analysis_classifier, x_test, t_test)
 
         # ============================= NAIVE BAYES GRID SEARCH ============================
         if classifier == 0 or classifier == 9:
@@ -206,15 +166,21 @@ def main():
                 best_smoothing = gaussian_naive_bayes.sklearn_random_grid_search(50)
                 gaussian_naive_bayes = MyNaiveBayes(x_train, t_train, x_test, t_test, var_smoothing=best_smoothing)
 
-            gaussian_naive_bayes.training()
-            print("Train accuracy : {:.4%}".format(gaussian_naive_bayes.classifier.score(
-                gaussian_naive_bayes.x_train, gaussian_naive_bayes.t_train)))
+            print_results(gaussian_naive_bayes, x_test, t_test)
 
-            gaussian_naive_bayes.prediction()
+    return
 
-            print("Test accuracy : {:.4%}".format(
-                accuracy_score(gaussian_naive_bayes.t_test, gaussian_naive_bayes.train_predictions)))
 
+def print_results(classifier, x_test, t_test):
+    classifier.training()
+    print("Train accuracy : {:.4%}".format(classifier.classifier.score(
+        classifier.x_train, classifier.t_train)))
+
+    classifier.prediction()
+
+    print("Test accuracy : {:.4%}".format(
+        accuracy_score(classifier.t_test, classifier.train_predictions)))
+    print("log loss = ", log_loss(t_test, classifier.classifier.predict_proba(x_test)))
     return
 
 

@@ -43,16 +43,16 @@ class DataPreprocesser:
                       '{:1.0f}'.format(data_descriptors_before) + " after PCA: " +
                       '{:1.0f}'.format(data_normalized_centered.shape[1]))
 
-        # We check that our data was correctly centerd and normalized
+        # We check that our data was correctly centered and normalized
         print("Mean of centered and normalized data :{:.4}".format(data_normalized_centered.mean()))
         print("Standard deviation of centered and normalized data :{:.4}".format(data_normalized_centered.std()))
 
         # ============================= TESTING FOR NORMALITY =============================
         p_total = 0
-        for i in range(0, len(data_normalized_centered[0])):
+        for i in range(0, len(raw_data[0])):
             column = []
-            for j in range(0, len(data_normalized_centered)):
-                column.append(data_normalized_centered[j, i])
+            for j in range(0, len(raw_data)):
+                column.append(raw_data[j, i])
             stat, p = normaltest(column)
             p_total += p
         print("Normaltest mean p={:.4}".format(p_total / len(data_normalized_centered)))
