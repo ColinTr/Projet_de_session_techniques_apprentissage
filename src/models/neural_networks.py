@@ -22,11 +22,11 @@ class MyNeuralNetwork(BaseClassifier):
 
     def sklearn_random_grid_search(self, n_iter):
         print("=========== Starting neural network grid search =========")
-        hls = [i for i in np.linspace(50, 150, 5, dtype=np.int16)]
-        [[hls.append((i, j)) for i in np.linspace(50, 150, 5, dtype=np.int16)]
-         for j in np.linspace(50, 150, 5, dtype=np.int16)]
+        hls = [i for i in np.linspace(10, 200, 15, dtype=np.int16)]
+        [[hls.append((i, j)) for i in np.linspace(10, 200, 15, dtype=np.int16)]
+         for j in np.linspace(10, 200, 15, dtype=np.int16)]
         distributions = dict(hidden_layer_sizes=hls,
-                             alpha=np.linspace(0.00001, 1, 10))
+                             alpha=np.linspace(0.00001, 1, 100))
 
         random_search = RandomizedSearchCV(self.classifier, distributions, n_jobs=-1, n_iter=n_iter, cv=5)
 

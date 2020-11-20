@@ -18,44 +18,47 @@ class DataPreprocesser:
         self.data_preprocessing_method = data_preprocessing_method
         self.use_pca = use_pca
 
-    def apply_preprocessing(self):
+        self.raw_data = self.data_normalized_centered = self.labels = self.species = None
+
+    def read_data(self):
         print("=============== Reading and handling data ===============")
         dh = DataHandler(self.data_input_filepath, self.output_filepath)
         dh.main()
-        raw_data, data_normalized_centered, labels, species = \
-            dh.read_all_output_files()
+        self.raw_data, self.data_normalized_centered, self.labels, self.species = dh.read_all_output_files()
+        return self.raw_data, self.data_normalized_centered, self.labels, self.species
 
+    def apply_preprocessing(self):
         if self.data_preprocessing_method == 2:
             scaler = MinMaxScaler()
-            scaler.fit(raw_data)
-            data_normalized_centered = scaler.transform(raw_data)
+            scaler.fit(self.raw_data)
+            self.data_normalized_centered = scaler.transform(self.raw_data)
 
         if self.use_pca == 1:
-            data_descriptors_before = raw_data.shape[1]
-            raw_data = apply_pca_on_data(raw_data)
-            data_normalized_centered = apply_pca_on_data(data_normalized_centered)
+            data_descriptors_before = self.raw_data.shape[1]
+            self.raw_data = apply_pca_on_data(self.raw_data)
+            self.data_normalized_centered = apply_pca_on_data(self.data_normalized_centered)
             if self.data_preprocessing_method == 0:
                 print("raw_data : Number of dimensions before PCA: " +
                       '{:1.0f}'.format(data_descriptors_before) + " after PCA: " +
-                      '{:1.0f}'.format(raw_data.shape[1]))
+                      '{:1.0f}'.format(self.raw_data.shape[1]))
             if self.data_preprocessing_method == 1 or self.data_preprocessing_method == 2:
                 print("data_normalized_centered : Number of dimensions before PCA: " +
                       '{:1.0f}'.format(data_descriptors_before) + " after PCA: " +
-                      '{:1.0f}'.format(data_normalized_centered.shape[1]))
+                      '{:1.0f}'.format(self.data_normalized_centered.shape[1]))
 
         # We check that our data was correctly centered and normalized
-        print("Mean of centered and normalized data :{:.4}".format(data_normalized_centered.mean()))
-        print("Standard deviation of centered and normalized data :{:.4}".format(data_normalized_centered.std()))
+        print("Mean of centered and normalized data :{:.4}".format(self.data_normalized_centered.mean()))
+        print("Standard deviation of centered and normalized data :{:.4}".format(self.data_normalized_centered.std()))
 
         # ============================= TESTING FOR NORMALITY =============================
         p_total = 0
-        for i in range(0, len(raw_data[0])):
+        for i in range(0, len(self.raw_data[0])):
             column = []
-            for j in range(0, len(raw_data)):
-                column.append(raw_data[j, i])
+            for j in range(0, len(self.raw_data)):
+                column.append(self.raw_data[j, i])
             stat, p = normaltest(column)
             p_total += p
-        print("Normaltest mean p={:.4}".format(p_total / len(data_normalized_centered)))
+        print("Normaltest mean p={:.4}".format(p_total / len(self.data_normalized_centered)))
 
         # ============================== GENERATING DATASETS ==============================
         # Let's create a train and test dataset
@@ -63,12 +66,12 @@ class DataPreprocesser:
         # We take the first split of our sss
         x_train = x_test = t_train = t_test = None
         if self.data_preprocessing_method == 0:
-            train_index, test_index = next(sss.split(raw_data, labels))
-            x_train, x_test = raw_data[train_index], raw_data[test_index]
-            t_train, t_test = labels[train_index].T[0], labels[test_index].T[0]
+            train_index, test_index = next(sss.split(self.raw_data, self.labels))
+            x_train, x_test = self.raw_data[train_index], self.raw_data[test_index]
+            t_train, t_test = self.labels[train_index].T[0], self.labels[test_index].T[0]
         if self.data_preprocessing_method == 1 or self.data_preprocessing_method == 2:
-            train_index, test_index = next(sss.split(data_normalized_centered, labels))
-            x_train, x_test = data_normalized_centered[train_index], data_normalized_centered[test_index]
-            t_train, t_test = labels[train_index].T[0], labels[test_index].T[0]
+            train_index, test_index = next(sss.split(self.data_normalized_centered, self.labels))
+            x_train, x_test = self.data_normalized_centered[train_index], self.data_normalized_centered[test_index]
+            t_train, t_test = self.labels[train_index].T[0], self.labels[test_index].T[0]
 
-        return x_train, t_train, x_test, t_test
+        return x_train, t_train, x_test, t_test, self.species

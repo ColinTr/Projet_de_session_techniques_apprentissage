@@ -1,5 +1,6 @@
 from sklearn.model_selection import StratifiedKFold, cross_val_score
 
+
 class BaseClassifier:
     def __init__(self, x_train, t_train, x_test, t_test, k_folds):
         self.classifier = None

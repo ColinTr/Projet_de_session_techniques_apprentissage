@@ -1,5 +1,6 @@
 import sys
 
+from sklearn.decomposition import PCA
 from sklearn.metrics import accuracy_score, log_loss
 from sklearn.tree import DecisionTreeClassifier
 
@@ -9,6 +10,7 @@ from src.models.neural_networks import MyNeuralNetwork
 from src.models.perceptron import MyPerceptron
 from src.models.logistic_regression import MyLogisticRegression
 from src.models.quadratic_discriminant_analysis import MyQuadraticDiscriminantAnalysis
+from src.models.super_classifier import SuperClassifier
 from src.models.support_vector_machines import MySVM
 from src.models.ridge_regression import MyRidgeRegression
 from src.models.naive_bayes import MyNaiveBayes
@@ -21,7 +23,8 @@ def main():
         print("Usage: python main.py train_data_input_filepath output_filepath classifier grid_search"
               "data_preprocessing use_pca\n")
         print("classifier : 0=>All, 1=>Neural Networks, 2=>Linear Discriminant Analysis, 3=>Logistic Regression,"
-              " 4=Ridge, 5=>Perceptron, 6=>SVM, 7=> AdaBoost, 8=>Quadratic Discriminant Analysis, 9=>Naive Bayes\n")
+              " 4=Ridge, 5=>Perceptron, 6=>SVM, 7=> AdaBoost, 8=>Quadratic Discriminant Analysis, 9=>Naive Bayes,"
+              " 10=Class grouping\n")
         print("grid_search : 0=>no grid search, 1=>use grid search\n")
         print("data_preprocessing : 0=>raw data, 1=>centered+standard deviation normalization,"
               "2=>centered+min/max normalization\n")
@@ -42,7 +45,7 @@ def main():
             print("Incorrect value for parameter use_pca")
             return
 
-        if classifier < 0 or classifier > 9:
+        if classifier < 0 or classifier > 10:
             print("Incorrect value for parameter classifier")
             return
 
@@ -56,7 +59,10 @@ def main():
 
         data_preprocesser = DataPreprocesser(data_input_filepath, output_filepath, classifier,
                                              data_preprocessing_method, use_pca)
-        x_train, t_train, x_test, t_test = data_preprocesser.apply_preprocessing()
+
+        raw_data, data_normalized_centered, labels, species = data_preprocesser.read_data()
+
+        x_train, t_train, x_test, t_test, species = data_preprocesser.apply_preprocessing()
 
         # ================================= NN GRID SEARCH =================================
         if classifier == 0 or classifier == 1:
@@ -179,6 +185,18 @@ def main():
                 gaussian_naive_bayes = MyNaiveBayes(x_train, t_train, x_test, t_test, var_smoothing=best_smoothing)
 
             print_results(gaussian_naive_bayes, x_test, t_test)
+
+        # ================================= CLASS GROUPING =================================
+        if classifier == 0 or classifier == 10:
+            print("CLASS GROUPING :")
+            super_classifier_data = raw_data
+            if data_preprocessing_method == 1:
+                super_classifier_data = data_normalized_centered
+            if use_pca == 1:
+                super_classifier_data = PCA(n_components='mle', svd_solver='full').fit_transform(super_classifier_data)
+            super_classifier = SuperClassifier(super_classifier_data, species, None, grid_search=grid_search)
+            super_classifier.train_base_classifier()
+            super_classifier.calculate_test_and_train_accuracy()
 
     return
 

@@ -27,6 +27,7 @@ class DataHandler:
         self.output_filepath = output_fp
         self.output_files_paths = []
 
+        self.species_column = None
         self.data = None
         self.data_normalized_centered = None
         self.labels = None
@@ -47,6 +48,7 @@ class DataHandler:
         self.export_data_into_csv()
 
     def encode_species(self, data_to_encode):
+        self.species_column = data_to_encode.species
         le = LabelEncoder().fit(data_to_encode.species)
         self.labels = le.transform(data_to_encode.species)
         self.species = list(le.classes_)
@@ -82,7 +84,7 @@ class DataHandler:
         self.data.to_csv(data_fp, index=False)
         self.data_normalized_centered.to_csv(centered_normalized_data_fp, index=False)
         pd.DataFrame(data=self.labels, columns=["label_num"]).to_csv(labels_fp, index=False)
-        pd.DataFrame(data=self.species, columns=["species"]).to_csv(species_fp, index=False)
+        pd.DataFrame(data=self.species_column, columns=["species"]).to_csv(species_fp, index=False)
         return
 
 
