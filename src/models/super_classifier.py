@@ -58,10 +58,10 @@ class SuperClassifier:
                                                self.x_test, self.t_test_super_species_encoded_labels)
 
         self.base_classifier.training()
-        print("Super classifier train accuracy : {:.4%}".format(self.base_classifier.classifier.score(
+        print("Main species classifier train accuracy : {:.4%}".format(self.base_classifier.classifier.score(
             self.base_classifier.x_train, self.base_classifier.t_train)))
         self.base_classifier.prediction()
-        print("Super classifier test accuracy : {:.4%}".format(
+        print("Main species classifier test accuracy : {:.4%}".format(
             accuracy_score(self.base_classifier.t_test, self.base_classifier.train_predictions)))
 
         if self.grid_search:
@@ -69,10 +69,10 @@ class SuperClassifier:
             self.base_classifier = MyNeuralNetwork(self.x_train, self.t_train_super_species_encoded_labels,
                                                    self.x_test, self.t_test_super_species_encoded_labels,
                                                    lamb=best_lamb, hidden_layer_sizes=best_hidden_layer_sizes)
-        self.base_classifier.training()
-        self.base_classifier.prediction()
-        print("Super classifier test accuracy after grid search : {:.4%}".format(
-            accuracy_score(self.base_classifier.t_test, self.base_classifier.train_predictions)))
+            self.base_classifier.training()
+            self.base_classifier.prediction()
+            print("Main species classifier test accuracy after grid search : {:.4%}".format(
+                accuracy_score(self.base_classifier.t_test, self.base_classifier.train_predictions)))
 
         self.sub_classifiers = dict()
 
@@ -92,12 +92,6 @@ class SuperClassifier:
                                                                      hidden_layer_sizes=best_hidden_layer_sizes,
                                                                      lamb=best_lamb)
                 self.sub_classifiers[key_name].training()
-                print("Sub classifier train accuracy : {:.4%}".format(self.sub_classifiers[key_name].classifier.score(
-                    self.sub_classifiers[key_name].x_train, self.sub_classifiers[key_name].t_train)))
-                self.sub_classifiers[key_name].prediction()
-                print("Sub classifier test accuracy : {:.4%}".format(
-                    accuracy_score(self.sub_classifiers[key_name].t_test,
-                                   self.sub_classifiers[key_name].train_predictions)))
 
         return
 

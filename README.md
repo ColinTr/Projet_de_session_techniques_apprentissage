@@ -5,9 +5,9 @@ Projet Session Techniques Apprentissage
 
 Il est possible de lancer ce programme à partir de la commande suivante :
 
-Exemple (Windows): python main.py data\raw\train\leaf-classification-train.csv data\processed 0 1 0
+Exemple (Windows): python main.py data\raw\train\leaf-classification-train.csv data\processed 0 0 0 0
 
-Exemple (Linux): python main.py data/raw/train/leaf-classification-train.csv data/processed 0 1 0
+Exemple (Linux): python main.py data/raw/train/leaf-classification-train.csv data/processed 0 0 0 0
 
 
 Project Organization
@@ -31,17 +31,20 @@ Project Organization
     │   ├── __init__.py    <- Makes src a Python module
     │   │
     │   ├── data           <- Scripts to download or generate data
-    │   │   └── data_handler.py
+    │   │   ├── data_handler.py
+    │   │   └── data_preprocesser.py
     │   │
     │   ├── models         <- Scripts to train models and then use trained models to make predictions
     │   │   ├── adaboost_classifier.py
     │   │   ├── base_classifier.py
     │   │   ├── linear_discriminant_analysis.py
-    │   │   ├── quadratic_discriminant_analysis.py
     │   │   ├── logistic_regression.py
+    │   │   ├── naive_bayes.py
     │   │   ├── neural_networks.py
     │   │   ├── perceptron.py
+    │   │   ├── quadratic_discriminant_analysis.py
     │   │   ├── ridge_regression.py
+    │   │   ├── super_classifier.py
     │   │   └── support_vector_machines.py
     │   │
     │   ├── visualization  <- Scripts to create exploratory and results oriented visualizations

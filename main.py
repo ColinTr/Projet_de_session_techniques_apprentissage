@@ -1,21 +1,21 @@
 import sys
 
-from sklearn.decomposition import PCA
 from sklearn.metrics import accuracy_score, log_loss
 from sklearn.tree import DecisionTreeClassifier
-
-from src.models.adaboost_classifier import MyAdaboostClassifier
-from src.models.linear_discriminant_analysis import MyLinearDiscriminantAnalysis
-from src.models.neural_networks import MyNeuralNetwork
-from src.models.perceptron import MyPerceptron
-from src.models.logistic_regression import MyLogisticRegression
-from src.models.quadratic_discriminant_analysis import MyQuadraticDiscriminantAnalysis
-from src.models.super_classifier import SuperClassifier
-from src.models.support_vector_machines import MySVM
-from src.models.ridge_regression import MyRidgeRegression
-from src.models.naive_bayes import MyNaiveBayes
+from sklearn.decomposition import PCA
 
 from src.data.data_preprocesser import DataPreprocesser
+
+from src.models.quadratic_discriminant_analysis import MyQuadraticDiscriminantAnalysis
+from src.models.linear_discriminant_analysis import MyLinearDiscriminantAnalysis
+from src.models.logistic_regression import MyLogisticRegression
+from src.models.adaboost_classifier import MyAdaboostClassifier
+from src.models.ridge_regression import MyRidgeRegression
+from src.models.super_classifier import SuperClassifier
+from src.models.neural_networks import MyNeuralNetwork
+from src.models.support_vector_machines import MySVM
+from src.models.naive_bayes import MyNaiveBayes
+from src.models.perceptron import MyPerceptron
 
 
 def main():
@@ -29,9 +29,9 @@ def main():
         print("data_preprocessing : 0=>raw data, 1=>centered+standard deviation normalization,"
               "2=>centered+min/max normalization\n")
         print("use_pca : 0=>no, 1=>yes\n")
-        print("Exemple (Windows): python main.py data\\raw\\train\\leaf-classification-train.csv data\\processed 0 1 "
-              "1 0\n")
-        print("Exemple (Linux): python main.py data/raw/train/leaf-classification-train.csv data/processed 0 1 1 0\n")
+        print("Exemple (Windows): python main.py data\\raw\\train\\leaf-classification-train.csv data\\processed 0 0 "
+              "0 0\n")
+        print("Exemple (Linux): python main.py data/raw/train/leaf-classification-train.csv data/processed 0 0 0 0\n")
 
     else:
         data_input_filepath = sys.argv[1]
@@ -57,8 +57,7 @@ def main():
             print("Incorrect value for parameter centered_normalized_bool")
             return
 
-        data_preprocesser = DataPreprocesser(data_input_filepath, output_filepath, classifier,
-                                             data_preprocessing_method, use_pca)
+        data_preprocesser = DataPreprocesser(data_input_filepath, output_filepath, data_preprocessing_method, use_pca)
 
         raw_data, data_normalized_centered, labels, species = data_preprocesser.read_data()
 
@@ -205,12 +204,13 @@ def print_results(classifier, x_test, t_test):
     classifier.training()
     print("Train accuracy : {:.4%}".format(classifier.classifier.score(
         classifier.x_train, classifier.t_train)))
+    print("Train log loss = ", log_loss(classifier.t_train, classifier.classifier.predict_proba(classifier.x_train)))
 
     classifier.prediction()
 
     print("Test accuracy : {:.4%}".format(
         accuracy_score(classifier.t_test, classifier.train_predictions)))
-    print("log loss = ", log_loss(t_test, classifier.classifier.predict_proba(x_test)))
+    print("Test log loss = ", log_loss(t_test, classifier.classifier.predict_proba(x_test)))
     return
 
 

@@ -3,6 +3,7 @@ from src.data.data_handler import DataHandler
 from scipy.stats import normaltest
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.decomposition import PCA
+import numpy as np
 
 
 def apply_pca_on_data(data):
@@ -11,10 +12,9 @@ def apply_pca_on_data(data):
 
 
 class DataPreprocesser:
-    def __init__(self, data_input_filepath, output_filepath, classifier, data_preprocessing_method, use_pca):
+    def __init__(self, data_input_filepath, output_filepath, data_preprocessing_method, use_pca):
         self.data_input_filepath = data_input_filepath
         self.output_filepath = output_filepath
-        self.classifier = classifier
         self.data_preprocessing_method = data_preprocessing_method
         self.use_pca = use_pca
 
@@ -51,14 +51,9 @@ class DataPreprocesser:
         print("Standard deviation of centered and normalized data :{:.4}".format(self.data_normalized_centered.std()))
 
         # ============================= TESTING FOR NORMALITY =============================
-        p_total = 0
-        for i in range(0, len(self.raw_data[0])):
-            column = []
-            for j in range(0, len(self.raw_data)):
-                column.append(self.raw_data[j, i])
-            stat, p = normaltest(column)
-            p_total += p
-        print("Normaltest mean p={:.4}".format(p_total / len(self.data_normalized_centered)))
+        normal_test = normaltest(self.raw_data)
+        stat, p = normal_test
+        print("Normaltest mean p={:.6}".format(np.mean(p, axis=0)))
 
         # ============================== GENERATING DATASETS ==============================
         # Let's create a train and test dataset
