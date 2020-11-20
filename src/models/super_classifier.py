@@ -99,9 +99,6 @@ class SuperClassifier:
                     accuracy_score(self.sub_classifiers[key_name].t_test,
                                    self.sub_classifiers[key_name].train_predictions)))
 
-                print("log loss = ", log_loss(self.t_test_sub_species_encoded_labels,
-                                              self.execute_class_grouping_prediction_algorithm(self.x_test)))
-
         return
 
     def calculate_test_and_train_accuracy(self):
@@ -125,7 +122,8 @@ class SuperClassifier:
             if isinstance(self.sub_classifiers[super_class_prediction], str):
                 final_predictions_list.append(np.int64(self.sub_classifiers[super_class_prediction].split("_")[1]))
             else:
-                final_predictions_list.append(self.sub_classifiers[super_class_prediction].classifier.predict([x])[0])
+                final_predictions_list.append(self.sub_classifiers[super_class_prediction]
+                                              .classifier.predict([x])[0])
 
         return final_predictions_list
 
