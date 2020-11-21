@@ -5,6 +5,13 @@ Ce projet de session a pour but de comparer 6 classifieurs différents : AdaBoos
 
 ***
 
+## Prérequis
+Pour fonctionner, ce projet a besoin d'un certain nombre de bibliothèques python que vous trouverez dans requirements.txt
+
+Pour les installer, lancez ```pip install -r requirements.txt```
+
+***
+
 Il est possible de lancer ce programme à partir de la commande suivante :
 
 ```python
