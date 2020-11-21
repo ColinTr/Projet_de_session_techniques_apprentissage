@@ -12,6 +12,7 @@ Pour les installer, lancez ```pip install -r requirements.txt```
 
 ***
 
+## Fonctionnement
 Il est possible de lancer ce programme à partir de la commande suivante :
 
 ```python
