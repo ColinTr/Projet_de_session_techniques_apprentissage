@@ -1,12 +1,12 @@
 IFT712_Projet_de_session
 ==============================
 
-##Projet de session de techniques d'apprentissage : Comparaison de 6 méthodes de classification de données
+Projet de session de techniques d'apprentissage : Comparaison de 6 méthodes de classification de données
 
 
 Il est possible de lancer ce programme à partir de la commande suivante :
 
-#####python main.py train_data_input_filepath output_filepath classifier grid_search data_preprocessing use_pca
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;python main.py train_data_input_filepath output_filepath classifier grid_search data_preprocessing use_pca
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;classifier : 0=>All, 1=>Neural Networks, 2=>Linear Discriminant Analysis, 3=>Logistic Regression, 4=Ridge, 5=>Perceptron, 6=>SVM, 7=> AdaBoost, 8=>Quadratic Discriminant Analysis, 9=>Naive Bayes, 10=Class grouping
 
