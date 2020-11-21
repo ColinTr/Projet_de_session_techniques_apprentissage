@@ -1,24 +1,28 @@
-IFT712_Projet_de_session
+IFT712_Projet_de_session : Comparaison de 6 méthodes de classification de données
 ==============================
 
-Projet de session de techniques d'apprentissage : Comparaison de 6 méthodes de classification de données
+Ce projet de session a pour but de comparer 6 classifieurs différents : AdaBoost, Linear Discriminant Analysis (LDA), Quadratic Discriminant Analysis (QDA), Logistic Regression, Neural Networks, Perceptron, Ridge Regression, Support Vector Machines et Naive Bayes. Les points de comparaison principaux sont le type de données, le type de traitement des données requis, le temps d'exécution, la log loss et le score de test et d’entraînement. Nous passons également en revue quelques bonnes pratiques à appliquer et comparons nos résultats à d’autres personnes ayant utilisé le même ensemble de données provenant du challenge Kaggle “Leaf Classification”.
 
+***
 
 Il est possible de lancer ce programme à partir de la commande suivante :
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;python main.py train_data_input_filepath output_filepath classifier grid_search data_preprocessing use_pca
+```python
+python main.py train_data_input_filepath output_filepath classifier grid_search data_preprocessing use_pca
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;classifier : 0=>All, 1=>Neural Networks, 2=>Linear Discriminant Analysis, 3=>Logistic Regression, 4=Ridge, 5=>Perceptron, 6=>SVM, 7=> AdaBoost, 8=>Quadratic Discriminant Analysis, 9=>Naive Bayes, 10=Class grouping
+    classifier : 0=>All, 1=>Neural Networks, 2=>Linear_Discriminant_Analysis, 3=>Logistic_Regression, 4=Ridge, 5=>Perceptron, 6=>SVM, 7=> AdaBoost, 8=>Quadratic_Discriminant Analysis, 9=>Naive_Bayes, 10=Class_grouping
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;grid_search : 0=>no grid search, 1=>use grid search
+    grid_search : 0=>no grid search, 1=>use grid search
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data_preprocessing : 0=>raw data, 1=>centered + standard deviation normalization, 2=>centered + mean deviation normalization
+    data_preprocessing : 0=>raw data, 1=>centered + standard deviation normalization, 2=>centered + mean deviation normalization
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;use_pca : 0=>no, 1=>yes
+    use_pca : 0=>no, 1=>yes
+```
+Exemple (Windows): ```python main.py data\\raw\\train\\leaf-classification-train.csv data\\processed 0 0 0 0```
 
-Exemple (Windows): python main.py data\\raw\\train\\leaf-classification-train.csv data\\processed 0 0 0 0
+Exemple (Linux): ```python main.py data/raw/train/leaf-classification-train.csv data/processed 0 0 0 0```
 
-Exemple (Linux): python main.py data/raw/train/leaf-classification-train.csv data/processed 0 0 0 0
+***
 
 Project Organization
 ------------
