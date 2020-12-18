@@ -1,3 +1,5 @@
+Note : Le rapport lié au projet peut être trouvé ici : [Rapport_projet_de_session](Rapport_projet_de_session_TROISEMAINE_LEVIEUX.pdf)
+
 IFT712_Projet_de_session : Comparaison de 6 méthodes de classification de données
 ==============================
 
